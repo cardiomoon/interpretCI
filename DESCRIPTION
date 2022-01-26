@@ -1,0 +1,36 @@
+Package: interpreteCI
+Type: Package
+Title: Estimate the Confidence Interval and Interprete Step by Step
+Version: 0.1.0
+Authors@R: person("Keon-Woong","Moon", email="cardiomoon@gmail.com",
+    role=c("aut", "cre"))
+URL: https://github.com/cardiomoon/CIplot
+Description: Estimate confidence intervals for mean, proportion, mean difference 
+   for unpaired and paired samples and proportion difference. Plot the confidence 
+   intervals. Generate documents explaining the statistical result step by step.
+License: GPL-3
+Encoding: UTF-8
+Imports:
+   dplyr,
+   purrr,
+   tidyr,
+   rlang,
+   ggplot2,
+   scales,
+   ggbeeswarm,
+   patchwork,
+   aplot,
+   rstudioapi,
+   rmarkdown,
+   flextable,
+   officer,
+   english,
+   RColorBrewer
+Suggests:
+    moonBook,
+    knitr,
+    PairedData,
+    glue
+LazyData: true
+RoxygenNote: 7.1.2
+VignetteBuilder: knitr

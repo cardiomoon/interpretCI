@@ -1,0 +1,172 @@
+---
+title: "Confidence interval for the paired mean difference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Confidence interval for the paired mean difference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA,fig.width=7,fig.height=5)
+library(CIplot)
+library(glue)
+library(flextable)
+```
+
+```{r,echo=FALSE,message=FALSE}
+#x<-params$result
+data(Anorexia,package="PairedData")
+x=meanCI(Anorexia,Prior,Post,paired=TRUE)
+
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+```
+
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+
+## Problem
+
+```{glue,results="asis",echo=FALSE}
+**From a population of {x$result$n*100} students,{x$result$n} students were randomly selected. The sampling method was simple random sampling. All of the students were given a standardized English test and a standardized math test. Test results are summarized below.**
+```
+```{r,echo=FALSE}
+cat("English")
+x$data[[1]]
+cat("math")
+x$data[[2]]
+```
+```{glue,results="asis",echo=FALSE}
+**Find the *{(1-x$result$alpha)*100}% confidence interval* for the mean difference between student scores on the math and English tests. Assume that the mean differences are approximately normally distributed.**
+```
+
+$$\sum(d-\bar{d})^2=`r round(sum(x$data$sum),2)`$$
+$$\bar{d}=`r round(x$result$md,2)`$$
+
+## Solution
+
+The approach that we used to solve this problem is valid when the following conditions are met.
+
+- The sampling method must be **simple random sampling**. This condition is satisfied; the problem statement says that we used simple random sampling.
+
+- The **sampling distribution** should be approximately normally distributed. The problem statement says that the differences were normally distributed; so this condition is satisfied.
+
+
+Since the above requirements are satisfied, we can use the following four-step approach to construct a confidence interval.
+
+### Identify a sample statistic. 
+
+#### Standard deviation($s_d$)
+
+To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r x$result$n` matched pairs. 
+
+```{r}
+df=x$data[1:10,]
+names(df)[4]="(d-mean(d)^2"
+flextable(df) %>% autofit()
+```
+
+$$s_d=\sqrt{\frac{\sum{(d_i-\bar{d})^2}}{n-1}}$$
+ 
+ $$s_d=\sqrt{\frac{`r round(sum(x$data$sum),2)`}{`r x$result$n`-1}}=`r round(x$result$sd,2)`$$
+ 
+where $d_i$ is the difference for pair i, $\bar{d}$ is the sample mean of the differences, and $n$ is the number of paired values.
+
+
+
+#### standard error(SE)
+
+Standard error. Compute the standard error (SE) of the sampling distribution of d.
+
+$$SE = s_d \times \sqrt{ ( 1/n )\times [ (N - n) / ( N - 1 ) ] }$$
+
+where $s_d$ is the standard deviation of the sample difference, $N$ is the number of matched pairs in the population, and $n$ is the number of matched pairs in the sample. When the population size is much larger (at least 20 times larger) than the sample size, the standard error can be approximated by:
+
+$$SE = \frac{s_d}{\sqrt{n}}=\frac{`r round(x$result$sd,2)`}{\sqrt{`r x$result$n`}}=`r round(x$result$se,2)`$$
+
+#### Select a confidence level. 
+
+In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-x$result$alpha)*100`% confidence level. The critical probability(p*) is:
+
+```{r,echo=FALSE}
+if(x$result$alternative=="two.sided"){
+    string=glue("$$p*=1-\\alpha/2=1-{x$result$alpha}/2={1- x$result$alpha/2}$$")
+} else{
+     string=glue("$$p*=1-\\alpha=1-{x$result$alpha}$$")
+}
+```
+`r string`
+
+#### Degrees of freedom(DF)
+
+$$DF=n-1=`r x$result$n`-1=`r x$result$DF`$$
+
+#### Find critical value
+
+The critical value is the $t$ statistic having `r x$result$DF`` degrees of freedom and a cumulative probability equal to 0.95. From the t Distribution table, we find that the critical value is `r round(x$result$critical,3)`.
+
+```{r,echo=FALSE}
+show_t_table(DF=x$result$DF,p=x$result$alpha,alternative=x$result$alternative)
+```
+
+```{r,echo=FALSE}
+draw_t(DF=x$result$DF,p=x$result$alpha,alternative=x$result$alternative)
+```
+
+
+#### Compute margin of error(ME): 
+
+$$ME =critical\ value\times standard\ error$$
+
+$$ME =`r round(x$result$critical,3)`\times`r round(x$result$se,2)`=`r round(x$result$ME,2)`$$
+
+
+### Confidence level
+
+```{r,results='asis',echo=FALSE}
+if(two.sided) {
+     string="The range of the confidence interval is defined by the sample statistic $\\pm$margin of error."
+} else if(less){
+     string="The range of the confidence interval is defined by the -$\\infty$(infinite) and the sample statistic + margin of error."
+} else{
+     string="The range of the confidence interval is defined by the sample statistic - margin of error and the $\\infty$(infinite)."
+}
+```
+
+`r string` And the uncertainty is denoted by the confidence level.
+
+
+### Confidence interval of the mean difference
+ 
+```{glue,results="asis",echo=FALSE}
+Therefore, **the {(1-x$result$alpha)*100}% confidence interval** is **{round(x$result$lower,2)} to {round(x$result$upper,2)}**. Here's how to interpret this confidence interval. Suppose we repeated this study with different random samples for men and women. Based on the confidence interval, we would expect the observed difference in sample means to be between {round(x$result$lower,2)} and {round(x$result$upper,2)} {(1-x$result$alpha)*100}% of the time.
+```
+
+### Plot
+
+You can visualize the mean difference:
+
+```{r}
+plot(x,side=FALSE)
+```
+
+### Result of meanCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+### Reference
+
+The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/estimation/mean-difference-pairs.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 

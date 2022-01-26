@@ -1,0 +1,174 @@
+---
+title: "Confidence Interval for the Difference In Proportions"
+output: html_document
+params:
+   result: "meanCI(mtcars$mpg)"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA)
+library(CIplot)
+library(glue)
+```
+
+```{r,echo=FALSE,message=FALSE}
+x<-params$result
+#x<-propCI(n1=400,n2=300,p1=0.4,p2=0.3,alpha=0.1)
+  
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+
+twoS="The null hypothesis will be rejected if the sample mean is too big or if it is too small."
+lessS="The null hypothesis will be rejected if the sample mean is too small."
+greaterS="The null hypothesis will be rejected if the sample mean is too big."
+```
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+## Problem
+
+
+```{r,echo=FALSE}
+
+string=glue("Suppose the Cartoon Network conducts a nation-wide survey to assess viewer attitudes toward Superman. Using a simple random sample, they select {x$result$n1} boys and {x$result$n2} girls to participate in the study. {English(x$result$p1*100)} percent of the boys say that Superman is their favorite character, compared to {english(x$result$p2*100)} percent of the girls. What is the {(1-x$result$alpha)*100}% confidence interval for the true difference in attitudes toward Superman?")
+
+textBox(string)
+```
+
+
+
+## Solution
+
+The approach that we used to solve this problem is valid when the following conditions are met.
+
+- The sampling method must be **simple random sampling**. This condition is satisfied; the problem statement says that we used simple random sampling.
+
+- Both samples should be independent. This condition is satisfied since neither sample was affected by responses of the other sample.
+
+- The sample should include at least 10 successes and 10 failures. Suppose we classify choosing Superman as a success, and any other response as a failure. Then, we have plenty of successes and failures in both samples.
+
+- The **sampling distribution** should be approximately normally distributed. Because each sample size is large, we know from the central limit theorem that the sampling distribution of the difference between sample proportions will be normal or nearly normal; so this condition is satisfied.
+
+
+## Solution
+
+Since the above requirements are satisfied, we can use the following four-step approach to construct a confidence interval.
+
+### 1. Identify a sample statistic. 
+
+ Since we are trying to estimate the difference between population proportions, we choose the difference between sample proportions as the sample statistic. Thus, the sample statistic is $p_{boy} - p_{girl} = `r x$result$p1` - `r x$result$p2` = `r x$result$pd`$.
+
+### 2. Select a confidence level. 
+
+In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-x$result$alpha)*100`% confidence level.
+
+### 3. Find the margin of error. 
+
+
+#### Find standard deviation or standard error. 
+
+Since we do not know the population proportions, we cannot compute the standard deviation; instead, we compute the standard error. And since each population is more than 20 times larger than its sample, we can use the following formula to compute the standard error (SE) of the difference between proportions:
+
+$$ SE= \sqrt{\frac{p_1(1-p_1)}{n_1}+\frac{p_2(1-p_2)}{n_2}}$$
+where $p_1$ is the sample proportion for sample 1, $n_1$ is the sample size from population 1, $p_2$ is the sample proportion for sample 2 and $n_2$ is the sample size from population 2.
+
+$$ SE= \sqrt{\frac{`r x$result$p1`(1-`r x$result$p1`)}{`r x$result$n1`}+\frac{`r x$result$p2`(1-`r x$result$p2`)}{`r x$result$n2`}}=`r round(x$result$se,3)`$$
+
+
+Find the critical probability(p*):
+
+```{r,echo=FALSE}
+if(x$result$alternative=="two.sided"){
+    string=glue("$$p*=1-\\alpha/2=1-{x$result$alpha}/2={1- x$result$alpha/2}$$")
+} else{
+     string=glue("$$p*=1-\\alpha=1-{x$result$alpha}$$")
+}
+```
+`r string`
+
+
+The **critical value** is the z statistic having a cumulative probability equal to `r ifelse(two.sided,1- x$result$alpha/2,1- x$result$alpha)`.
+
+```{r,results='asis',echo=FALSE}
+if(two.sided){
+  string=glue("$$qnorm(p)=qnorm({1- x$result$alpha/2})={round(x$result$critical,3)}$$")
+} else {
+    string=glue("$$qnorm(p)=qt({1- x$result$alpha})={round(x$result$critical,3)}$$") 
+} 
+```
+
+We can get the critical value using the following R code.
+
+`r string`
+
+Alternatively, we find that the critical value is `r round(x$result$critical,3)` from the normal Distribution table.
+
+```{r,echo=FALSE}
+show_z_table(p=x$result$alpha,alternative=x$result$alternative)
+```
+
+
+The graph shows the $\alpha$ values are the tail areas of the distribution. 
+
+```{r,echo=FALSE}
+draw_n(p=x$result$alpha,alternative=x$result$alternative)
+```
+
+Compute **margin of error**(ME):
+
+$$ME=critical\ value \times SE$$
+$$ME=`r round(x$result$critical,3)` \times `r round(x$result$se,3)`=`r round(x$result$ME,3)`$$
+
+```{r,results='asis',echo=FALSE}
+if(two.sided) {
+     string="The range of the confidence interval is defined by the sample statistic $\\pm$margin of error."
+} else if(less){
+     string="The range of the confidence interval is defined by the -$\\infty$(infinite) and the sample statistic + margin of error."
+} else{
+     string="The range of the confidence interval is defined by the sample statistic - margin of error and the $\\infty$(infinite)."
+}
+```
+
+Specify the confidence interval. `r string` And the uncertainty is denoted by the confidence level.
+
+### 4. Confidence interval of the proportion
+ 
+
+```{r,echo=FALSE}
+if(x$result$lower>0) {
+  string="Since both ends of the confidence interval are positive, we can conclude that more boys than girls choose Superman as their favorite cartoon character."
+} else if(x$result$upper<0) {
+  string="Since both ends of the confidence interval are negative, we can conclude that less boys than girls choose Superman as their favorite cartoon character."
+} else{
+  string=""
+}
+```
+
+
+```{glue,results='asis',echo=FALSE}
+Therefore, the {(1-x$result$alpha)*100}% confidence interval is {round(x$result$lower,2)} to {round(x$result$upper,2)}. That is, we are {(1-x$result$alpha)*100}% confident that the true proportion is in the range **{round(x$result$lower,2)} to {round(x$result$upper,2)}**. 
+```
+`r string`
+
+
+
+
+### Result of propCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+### Reference
+
+The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/estimation/difference-in-proportions.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 
+

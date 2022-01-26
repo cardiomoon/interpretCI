@@ -1,0 +1,141 @@
+---
+title: "Hypothesis test for a difference between proportions"
+output: html_document
+params:
+   result: "meanCI(mtcars$mpg)"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA)
+library(CIplot)
+library(glue)
+```
+
+```{r,echo=FALSE,message=FALSE}
+x<-params$result
+#x=propCI(n1=100,n2=200,p1=0.38,p2=0.51)
+  
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+
+twoS="The null hypothesis will be rejected if the proportion from population 1 is too big or if it is too small."
+lessS="The null hypothesis will be rejected if the proportion from population 1 is too small."
+greaterS="The null hypothesis will be rejected if the proportion from population 1 is too big."
+```
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+## Problem
+
+
+```{r,echo=FALSE}
+
+string=glue("Suppose the Acme Drug Company develops a new drug, designed to prevent colds. The company states that the drug is equally effective for men and women. To test this claim, they choose a a simple random sample of {x$result$n1} women and {x$result$n2} men from a population of {(x$result$n1+x$result$n2)*50} volunteers.
+
+At the end of the study, {x$result$p1*100}% of the women caught a cold; and {x$result$p2*100}% of the men caught a cold. Based on these findings, can we reject the company's claim that the drug is {ifelse(two.sided,'equally',ifelse(less,'more','less'))} effective for men and women? Use a {x$result$alpha} level of significance.")
+
+textBox(string)
+```
+
+
+
+## Solution
+
+This lesson explains how to conduct a hypothesis test to determine whether the difference between two proportions is significant.
+
+The test procedure, called the **two-proportion z-test**, is appropriate when the following conditions are met:
+
+- The sampling method for each population is simple random sampling.
+
+- The samples are independent.
+
+- Each sample includes at least 10 successes and 10 failures.
+
+- Each population is at least 20 times as big as its sample.
+
+This approach consists of four steps: (1) state the hypotheses, (2) formulate an analysis plan, (3) analyze sample data, and (4) interpret results.
+
+
+Since the above requirements are satisfied, we can use the following four-step approach to construct a confidence interval.
+
+
+### 1. State the hypotheses 
+
+The first step is to state the null hypothesis and an alternative hypothesis.
+
+$$Null\ hypothesis(H_0): P_1 `r ifelse(two.sided,"=",ifelse(less,"\\geqq","\\leqq"))` P_2$$
+$$Alternative\ hypothesis(H_1): P_1 `r ifelse(two.sided, "\\neq" ,ifelse(less,"<",">"))` P_2$$
+
+Note that these hypotheses constitute a `r ifelse(two.sided,"two","one")`-tailed test. `r ifelse(two.sided,twoS,ifelse(less,lessS,greaterS))`.
+
+### 2. Formulate an analysis plan
+
+For this analysis, the significance level is `r x$result$alpha``. The test method, shown in the next section, is a **two-proportion z-test**.
+
+
+### 3. Analyze sample data
+
+Using sample data, we calculate the pooled sample proportion (p) and the standard error (SE). Using those measures, we compute the z-score test statistic (z).
+
+$$p=\frac{p_1 \times n_1+ p_2 \times n_2}{n1+n2}$$
+$$p=\frac{`r x$result$p1` \times `r x$result$n1`+ `r x$result$p2` \times `r x$result$n2`}{`r x$result$n1`+`r x$result$n2`}$$
+
+$$p=`r x$result$p1*x$result$n1+x$result$p2*x$result$n2`/`r x$result$n1+x$result$n2`=`r round(x$result$ppooled,3)`$$
+
+$$SE=\sqrt{p\times(1-p)\times[1/n_1+1/n_2]}$$
+
+$$SE=\sqrt{`r round(x$result$ppooled,3)`\times`r round(1-x$result$ppooled,3)`\times[1/`r x$result$n1`+1/`r x$result$n2`]}=`r round(x$result$se,3)`$$
+
+
+$$z=\frac{p_1-p_2}{SE}=\frac{`r x$result$p1`-`r x$result$p2`}{`r round(x$result$se,3)`}=`r round(x$result$z,2)`$$
+
+where $p_1$ is the sample proportion in sample 1, where $p_2$ is the sample proportion in sample 2, $n_1$ is the size of sample 1, and $n_2$ is the size of sample 2.
+
+Since we have a `r ifelse(two.sided,"two","one")`-tailed test, the P-value is the probability that the z statistic is `r if(!greater) "less than"` `r if(!greater) round(-abs(x$result$z),2)` `r if(!less) "or greater than "` `r if(!less) round(abs(x$result$z),2)`.
+
+We can use following R code to find the p value.
+
+```{r,echo=FALSE}
+
+if(two.sided){
+               string=glue("pnorm(-abs({round(x$result$z,2)}))\\times2")
+} else if(greater){
+               string=glue("pnorm({round(x$result$z,2)},lower.tail=FALSE)")
+} else{
+               string=glue("pnorm({round(x$result$z,2)})")
+          }
+```
+
+$$p=`r string`=`r round(x$result$pvalue,3)`$$
+
+
+Alternatively,we can use the Normal Distribution curve to find p value.
+
+```{r}
+draw_n(z=x$result$z,alternative=x$result$alternative)
+```
+
+### 4. Interpret results. 
+
+Since the P-value (`r round(x$result$pvalue,3)`) is `r ifelse(x$result$pvalue>x$result$alpha,"greater","less")` than the significance level (`r x$result$alpha`), we cannot `r ifelse(x$result$pvalue>x$result$alpha,"reject","accept")` the null hypothesis.
+
+
+### Result of propCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+### Reference
+
+The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/hypothesis-test/difference-in-proportions.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 
+

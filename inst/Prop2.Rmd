@@ -1,0 +1,140 @@
+---
+title: "Hypothesis Test for a Proportion"
+output: html_document
+params:
+   result: "meanCI(mtcars$mpg)"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA)
+library(CIplot)
+library(glue)
+```
+
+```{r,echo=FALSE,message=FALSE}
+x<-params$result
+
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+
+twoS="The null hypothesis will be rejected if the sample proportion is too big or if it is too small."
+lessS="The null hypothesis will be rejected if the sample proportion is too small."
+greaterS="The null hypothesis will be rejected if the sample proportion is too big."
+```
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+## Problem
+
+
+```{r,echo=FALSE}
+
+string=glue("The CEO of a large electric utility claims that {(1-x$result$P)*100} percent of his {x$result$n*100} customers are very satisfied with the service they receive. To test this claim, the local newspaper surveyed {x$result$n} customers, using simple random sampling. Among the sampled customers, {(1-x$result$p)*100} percent say they are very satisified. Based on these findings, can we reject the CEO's hypothesis that {(1-x$result$P)*100}% of the customers are very satisfied? Use a {x$result$alpha} level of significance.")
+
+textBox(string)
+```
+
+
+
+## Confidence interval of a sample proportion
+
+The approach that we used to solve this problem is valid when the following conditions are met.
+
+- The sampling method must be **simple random sampling**. This condition is satisfied; the problem statement says that we used simple random sampling.
+
+- Each sample point can result in just two possible outcomes. We call one of these outcomes a success and the other, a failure.
+
+- The sample should include at least 10 successes and 10 failures. Suppose we classify a "more local news" response as a success, and any other response as a failure. Then, we have `r x$result$p` $\times$ `r x$result$n` = `r x$result$p*x$result$n` successes, and `r 1-x$result$p` $\times$ `r x$result$n` = `r (1-x$result$p)*x$result$n` failures - plenty of successes and failures.
+
+- The population size is at least 20 times as big as the sample size. If the population size is much larger than the sample size, we can use an **approximate** formula for the standard deviation or the standard error. This condition is satisfied, so we will use one of the simpler **approximate** formulas.
+
+
+### Solution
+
+## This approach consists of four steps: 
+
+- state the hypotheses
+
+- formulate an analysis plan
+
+- analyze sample data
+
+- interpret results.
+
+
+
+### 1. State the hypotheses 
+
+The first step is to state the null hypothesis and an alternative hypothesis.
+
+$$Null\ hypothesis(H_0): P `r ifelse(two.sided,"=",ifelse(less,">=","<="))` `r x$result$P`$$
+$$Alternative\ hypothesis(H_1): P `r ifelse(two.sided, "\\neq" ,ifelse(less,"<",">"))` `r x$result$P`$$
+
+Note that these hypotheses constitute a `r ifelse(two.sided,"two","one")`-tailed test. `r ifelse(two.sided,twoS,ifelse(less,lessS,greaterS))`.
+
+### 2. Formulate an analysis plan
+
+For this analysis, the significance level is `r x$result$alpha``. The test method, shown in the next section, is a **one-sample z-test**.
+
+### 2. Select a confidence level. 
+
+In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-x$result$alpha)*100`% confidence level.
+
+### 3. Analyze sample data
+
+Using sample data, we calculate the standard deviation (sd) and compute the z-score test statistic (z).
+
+$$sd=\sqrt{\frac{P\times(1-P)}{n}}$$
+$$sd=\sqrt{\frac{`r x$result$P`\times(1-`r x$result$P`)}{`r x$result$n`}}=`r x$result$se`$$
+$$z=\frac{p-P}{sd}=\frac{`r x$result$p`-`r x$result$P`}{`r x$result$se`}=`r x$result$z`$$
+where $P$ is the hypothesized value of population proportion in the null hypothesis, $p$ is the sample proportion, and $n$ is the sample size.
+
+Since we have a `r ifelse(two.sided,"two","one")`-tailed test, the P-value is the probability that the z statistic is `r if(!greater) "less than"` `r if(!greater) round(-abs(x$result$z),2)` `r if(!less) "or greater than "` `r if(!less) round(abs(x$result$z),2)`.
+
+We can use following R code to find the p value.
+
+```{r,echo=FALSE}
+
+if(two.sided){
+               string=glue("pnorm(-abs({x$result$z}))\\times2")
+} else if(greater){
+               string=glue("pnorm({x$result$z},lower.tail=FALSE)")
+} else{
+               string=glue("pnorm({x$result$z})")
+          }
+```
+
+$$p=`r string`=`r round(x$result$pvalue,3)`$$
+
+
+Alternatively,we can use the Normal Distribution curve to find p value.
+
+```{r}
+draw_n(z=x$result$z,alternative=x$result$alternative)
+```
+
+
+
+### 4. Interpret results. 
+
+Since the P-value (`r round(x$result$pvalue,3)`) is `r ifelse(x$result$pvalue>x$result$alpha,"greater","less")` than the significance level (`r x$result$alpha`), we can`r if(x$result$pvalue>x$result$alpha) "not"` reject the null hypothesis.
+
+
+### Result of propCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+### Reference
+
+The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/hypothesis-test/proportion.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 

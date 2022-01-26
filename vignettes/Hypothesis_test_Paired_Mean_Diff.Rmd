@@ -1,0 +1,207 @@
+---
+title: "Hypothesis test for the difference between paired means"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hypothesis test for the difference between paired means}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA,fig.width=7,fig.height=5)
+library(CIplot)
+library(glue)
+library(flextable)
+library(dplyr)
+```
+
+```{r,echo=FALSE,message=FALSE}
+#x<-params$result
+data(Anorexia,package="PairedData")
+
+x=meanCI(Anorexia,Post,Prior,paired=TRUE,alternative="greater",mu=4)
+
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+twoS="The null hypothesis will be rejected if the difference between sample means is too big or if it is too small."
+lessS="The null hypothesis will be rejected if the difference between sample means is too small."
+greaterS="The null hypothesis will be rejected if the difference between sample means is too big."
+
+if(two.sided){
+if(x$result$mu==0) {
+     claim= "Test the hypothesis that there will be no difference in body weightmen after treatment"
+} else {
+     claim= paste0("Test the claims that the weigth gain after treatment is equal to ", x$result$mu) 
+}
+} else{
+    if(x$result$mu==0) {
+     claim= paste0("Test the hypothesis that the patients gain weights", ifelse(greater,"more","less")," after treatment.")
+   } else {
+       claim= paste0("Test the claims that the patients ",ifelse(x$result$mu>0,"gain","loose")," at least ", 
+                   ifelse(greater," more"," less")," than ", english(abs(x$result$mu)), " pounds in weights after treatment.") 
+   }
+}
+```
+
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+## Problem
+
+```{glue,results="asis",echo=FALSE}
+**{English(x$result$n)} patients with anorexia were treated in a hospital. Their weight were checked before and after treatment. Test results are summarized below.**
+```
+
+```{r,echo=FALSE}
+cat("After treatment")
+x$data[[1]]
+cat("Before treatment")
+x$data[[2]]
+```
+
+```{glue,results="asis",echo=FALSE}
+**{claim} Use an {x$result$alpha} level of significance. Assume that the mean differences are approximately normally distributed.**
+```
+
+$$\sum(d-\bar{d})^2=`r round(sum(x$data$sum),2)`$$
+$$\bar{d}=`r round(x$result$md,2)`$$
+
+
+## Conditions
+
+This lesson explains how to conduct a hypothesis test for the difference between paired means. The test procedure, called the **matched-pairs t-test**, is appropriate when the following conditions are met:
+
+-The sampling method for each sample is simple random sampling.
+
+- The test is conducted on paired data. (As a result, the data sets are not independent.)
+
+- The sampling distribution is approximately normal, which is generally true if any of the following conditions apply.
+
+     + The population distribution is normal.
+     
+     + The population data are symmetric, unimodal, without outliers, and the sample size is 15 or less.
+     
+     + The population data are slightly skewed, unimodal, without outliers, and the sample size is 16 to 40.
+
+     + The sample size is greater than 40, without outliers.
+     
+This approach consists of four steps: (1) state the hypotheses, (2) formulate an analysis plan, (3) analyze sample data, and (4) interpret results.
+
+
+## State the hypotheses
+
+Every hypothesis test requires the analyst to state a null hypothesis and an alternative hypothesis. The hypotheses are stated in such a way that they are mutually exclusive. That is, if one is true, the other must be false; and vice versa.
+
+The hypotheses concern a new variable d, which is based on the difference between paired values from two data sets.
+
+
+$$Null\ hypothesis(H_0): \mu_1-\mu_2 `r ifelse(two.sided,"=",ifelse(less,">=","<="))` `r x$result$mu`$$
+$$Alternative\ hypothesis(H_1): \mu_1-\mu_2 `r ifelse(two.sided, "\\neq" ,ifelse(less,"<",">"))` `r x$result$mu`$$
+
+Note that these hypotheses constitute a `r ifelse(two.sided,"two","one")`-tailed test. `r ifelse(two.sided,twoS,ifelse(less,lessS,greaterS))`.
+
+
+## Analyze Sample Data
+
+Using sample data, find the standard deviation, standard error, degrees of freedom, test statistic, and the P-value associated with the test statistic.
+
+#### Standard deviation($s_d$)
+
+To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r x$result$n` matched pairs. In the following table, the first `r english(min(10,nrow(x$data)))` data are shown.
+
+```{r}
+df=x$data[1:min(10,nrow(x$data)),]
+names(df)[4]="(d-mean(d)^2"
+flextable(df) %>% autofit()
+```
+
+
+
+
+ $$s_d=\sqrt{\frac{\sum{(d_i-\bar{d})^2}}{n-1}}$$
+ 
+ $$s_d=\sqrt{\frac{`r round(sum(x$data$sum),2)`}{`r x$result$n`-1}}=`r round(x$result$sd,2)`$$
+ 
+where $d_i$ is the difference for pair i, $\bar{d}$ is the sample mean of the differences, and $n$ is the number of paired values.
+
+
+
+#### standard error(SE)
+
+Standard error. Compute the standard error (SE) of the sampling distribution of d.
+
+$$SE = s_d \times \sqrt{ ( 1/n )\times [ (N - n) / ( N - 1 ) ] }$$
+
+where $s_d$ is the standard deviation of the sample difference, $N$ is the number of matched pairs in the population, and $n$ is the number of matched pairs in the sample. When the population size is much larger (at least 20 times larger) than the sample size, the standard error can be approximated by:
+
+$$SE = \frac{s_d}{\sqrt{n}}=\frac{`r round(x$result$sd,2)`}{\sqrt{`r x$result$n`}}=`r round(x$result$se,2)`$$
+
+#### Select a confidence level. 
+
+In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-x$result$alpha)*100`% confidence level. The critical probability(p*) is:
+
+```{r,echo=FALSE}
+if(two.sided){
+    string=glue("$$p*=1-\\alpha/2=1-{x$result$alpha}/2={1- x$result$alpha/2}$$")
+} else{
+     string=glue("$$p*=1-\\alpha=1-{x$result$alpha}$$")
+}
+```
+`r string`
+
+#### Degrees of freedom(DF)
+
+$$DF=n-1=`r x$result$n`-1=`r x$result$DF`$$
+
+#### Test statistics
+
+The test statistic is a t statistic (t) defined by the following equation.
+
+$$t = [ (\bar{x1} - \bar{x2}) - \mu ] / SE = ( \bar{d}-\mu) / SE$$
+$$t=[(`r round(x$result$m1,2)`-`r round(x$result$m2,2)`)-`r x$result$mu`]/`r round(x$result$se,2)`=`r round(x$result$t,2)`$$
+
+where $\bar{x1}$ is the mean of sample 1, $\bar{x2}$ is the mean of sample 2, $\bar{d}$ is the mean difference between paired values in the sample, $\mu$ is the hypothesized difference between population means, and SE is the standard error.
+
+Since we have a `r ifelse(two.sided,"two","one")`-tailed test, the P-value is the probability that the t statistic having `r round(x$result$DF,2)` degrees of freedom is `r if(!greater) "less than"` `r if(!greater) round(-abs(x$result$t),2)` `r if(!less) "or greater than "` `r if(!less) round(abs(x$result$t),2)`.
+
+We use the t Distribution curve to find p value.
+
+```{r}
+draw_t(DF=round(x$result$DF,2),t=x$result$t,alternative=x$result$alternative)
+```
+
+### 4. Interpret results. 
+
+Since the P-value (`r round(x$result$p,3)`) is `r ifelse(x$result$p>x$result$alpha,"greater","less")` than the significance level (`r x$result$alpha`), we can`r if(x$result$p>x$result$alpha) "not"` reject the null hypothesis.
+
+We can plot the mean difference.
+```{r}
+plot(x,ref="test",side=FALSE)
+```
+
+### Result of t.test
+
+```{r}
+t.test(x$data[[1]],x$data[[2]],paired=TRUE,alternative=x$result$alternative,conf.level=1-x$result$alpha,mu=x$result$mu)
+```
+
+### Result of meanCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+
+### Reference
+
+1. The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/hypothesis-test/paired-means.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 
+

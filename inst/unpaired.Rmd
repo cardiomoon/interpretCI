@@ -1,0 +1,155 @@
+---
+title: "Difference Between Means"
+output: html_document
+params:
+   result: !r meanCI(n1=500,n2=1000,m1=20,s1=3,m2=15,s2=2,alpha=0.01)
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA)
+library(CIplot)
+library(glue)
+```
+
+```{r,echo=FALSE,message=FALSE}
+x<-params$result
+#x=meanCI(n1=500,n2=1000,m1=20,s1=3,m2=15,s2=2,alpha=0.01,alternative="greater")
+
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+```
+
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+
+## Problem
+
+```{r,echo=FALSE}
+string=glue("The local baseball team conducts a study to find the amount spent on refreshments at the ball park. Over the course of the season they gather simple random samples of {x$result$n1} men and {x$result$n2} women. For men, the average expenditure was $ {x$result$m1}, with a standard deviation of $ {x$result$s1}. For women, it was ${x$result$m2}, with a standard deviation of ${x$result$s2}.
+
+What is the {(1-x$result$alpha)*100}% confidence interval for the spending difference between men and women? Assume that the two populations are independent and normally distributed.")
+
+textBox(string)
+```
+## Confidence interval of mean
+
+The approach that we used to solve this problem is valid when the following conditions are met.
+
+- The sampling method must be **simple random sampling**. 
+
+- The samples must be **independent**.
+
+- The **sampling distribution** should be approximately normally distributed. 
+
+Since the above requirements are satisfied, we can use the following four-step approach to construct a confidence interval of mean.
+
+### Raw data
+
+`r ifelse(is.na(x$data[[1]][1]),"Raw data is not provided.","The raw data are as follows.")`
+
+```{r,echo=FALSE}
+if(!is.na(x$data[[1]][1])) {
+     x$data
+}
+```
+
+### Identify sample statistics
+
+Since we are trying to estimate the difference between population means, we choose the difference between sample means as the sample statistic. Thus, 
+
+$$\bar{x1}-\bar{x2}=`r x$result$m1`-`r x$result$m2`=`r x$result$md`$$
+
+### Select a confidence level. 
+
+In this analysis, the confidence level is defined for us in the problem. We are working with a 99% confidence level.
+
+
+### Find the margin of error
+
+
+#### 1. Find standard error. 
+
+The standard error is an estimate of the standard deviation of the difference between population means. We use the sample standard deviations to estimate the standard error (SE).
+
+$$SE=\sqrt{\frac{s^2_1}{n_1}+\frac{s^2_2}{n_2}}$$
+$$SE=\sqrt{\frac{`r x$result$s1`^2}{`r x$result$n1`}+\frac{`r x$result$s2`^2}{`r x$result$n2`}}$$
+$$SE=`r round(x$result$se,3)`$$
+
+#### 2. Find the degree of freedom(df)
+
+ $$DF=\frac{(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2})^2}{\frac{(s_1^2/n_1)^2}{n_1-1}+\frac{(s_2^2/n_2)^2}{n_2-1}}$$
+$$DF=\frac{(\frac{`r x$result$s1`^2}{`r x$result$n1`}+\frac{`r x$result$s2`^2}{`r x$result$n2`})^2}{\frac{(`r x$result$s1`^2/`r x$result$n1`)^2}{`r x$result$n1`-1}+\frac{(`r x$result$s2`^2/`r x$result$n2`)^2}{`r x$result$n2`-1}}$$
+
+
+$$DF=`r round(x$result$DF,2)`$$
+
+#### 3. Find the critical value
+
+The **critical value** is the t statistic having `r round(x$result$DF,2)` degrees of freedom and a cumulative probability equal to `r 1- x$result$alpha/ifelse(two.sided,2,1)`. From the t Distribution table, we find that the critical value is `r round(x$result$critical,3)`.
+
+```{r,echo=FALSE}
+show_t_table(DF=round(x$result$DF,2),p=x$result$alpha,alternative=x$result$alternative)
+```
+
+
+$$ qt(p,df)=qt(`r 1- x$result$alpha/ifelse(two.sided,2,1)`,`r round(x$result$DF,2)`)=`r round(x$result$critical,3)`$$
+The graph shows that $\alpha$ values are the tail areas of the distribution. 
+
+```{r,echo=FALSE}
+draw_t(DF=round(x$result$DF,2),p=x$result$alpha,alternative=x$result$alternative)
+```
+
+#### 4. Compute margin of error(ME)
+
+$$ME=critical\ value \times SE$$
+$$ME=`r round(x$result$critical,3)` \times `r round(x$result$se,3)`=`r round(x$result$ME,3)`$$
+
+#### 5. Specify confidence interval 
+
+```{r,results='asis',echo=FALSE}
+if(two.sided) {
+     string="The range of the confidence interval is defined by the sample statistic $\\pm$margin of error."
+} else if(less){
+     string="The range of the confidence interval is defined by the -$\\infty$(infinite) and the sample statistic + margin of error."
+} else{
+     string="The range of the confidence interval is defined by the sample statistic - margin of error and the $\\infty$(infinite)."
+}
+```
+
+`r string` And the uncertainty is denoted by the confidence level.
+
+
+### Confidence interval of the mean difference
+ 
+```{glue,results="asis",echo=FALSE}
+Therefore, the {(1-x$result$alpha)*100}% confidence interval is {round(x$result$lower,2)} to {round(x$result$upper,2)}. Here's how to interpret this confidence interval. Suppose we repeated this study with different random samples for men and women. Based on the confidence interval, we would expect the observed difference in sample means to be between {round(x$result$lower,2)} and {round(x$result$upper,2)} {(1-x$result$alpha)*100}% of the time.
+```
+
+### Plot
+
+You can visualize the mean difference:
+
+```{r}
+plot(x)
+```
+
+### Result of meanCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+### Reference
+
+The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/estimation/difference-in-means.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 
+

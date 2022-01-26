@@ -1,0 +1,135 @@
+---
+title: "Hypothesis test for a mean"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Hypothesis test for a mean}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA,fig.width=7,fig.height=5)
+library(CIplot)
+library(glue)
+```
+
+```{r,echo=FALSE,message=FALSE}
+x=meanCI(mtcars,mpg,mu=23)
+
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+
+twoS="The null hypothesis will be rejected if the sample mean is too big or if it is too small."
+lessS="The null hypothesis will be rejected if the sample mean is too small."
+greaterS="The null hypothesis will be rejected if the sample mean is too big."
+```
+
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+
+## Given Problem : `r ifelse(two.sided,"Two","One")`-Tailed Test
+
+```{r,echo=FALSE}
+
+string=glue("An inventor has developed a new, energy-efficient lawn mower engine. He claims that the engine will run continuously for {round(x$result$mu,2)} minutes on a single gallon of regular gasoline. From his stock of 2000 engines, the inventor selects a simple random sample of {x$result$n} engines for testing. The engines run for an average of {round(x$result$m,2)} minutes, with a standard deviation of {round(x$result$s,2)} minutes. Test the null hypothesis that the mean run time {ifelse(two.sided,'is',ifelse(less, 'greater than','less than'))} {x$result$mu} minutes against the alternative hypothesis that the mean run time {ifelse(two.sided,'is not',ifelse(less, 'less than','greater than'))} {round(x$result$mu,2)} minutes. Use a {x$result$alpha} level of significance. (Assume that run times for the population of engines are normally distributed.)")
+
+textBox(string)
+```
+
+## Hypothesis Test for a Mean
+
+This lesson explains how to conduct a hypothesis test of a mean, when the following conditions are met:
+
+- The sampling method is **simple random sampling**.
+
+- The sampling distribution is **normal** or **nearly normal**.
+
+Generally, the sampling distribution will be approximately normally distributed if any of the following conditions apply.
+
+- The population distribution is normal.
+
+- The population distribution is symmetric, unimodal, without outliers, and the sample size is 15 or less.
+
+- The population distribution is moderately skewed, unimodal, without outliers, and the sample size is between 16 and 40.
+
+- The sample size is greater than 40, without outliers.
+
+## This approach consists of four steps: 
+
+- state the hypotheses
+
+- formulate an analysis plan
+
+- analyze sample data
+
+- interpret results.
+
+
+
+### 1. State the hypotheses 
+
+The first step is to state the null hypothesis and an alternative hypothesis.
+
+$$Null\ hypothesis(H_0): \mu `r ifelse(two.sided,"=",ifelse(less,">=","<="))` `r x$result$mu`$$
+$$Alternative\ hypothesis(H_1): \mu `r ifelse(two.sided, "\\neq" ,ifelse(less,"<",">"))` `r x$result$mu`$$
+
+Note that these hypotheses constitute a `r ifelse(two.sided,"two","one")`-tailed test. `r ifelse(two.sided,twoS,ifelse(less,lessS,greaterS))`.
+
+
+### 2. Formulate an analysis plan
+
+For this analysis, the significance level is `r (1-x$result$alpha)*100`%. The test method is a **one-sample t-test**.
+
+### 3. Analyze sample data. 
+
+Using sample data, we compute the standard error (SE), degrees of freedom (DF), and the t statistic test statistic (t).
+
+$$SE = \frac{s}{\sqrt{n}} = \frac{`r x$result$s`}{\sqrt{`r x$result$n`}} = `r round(x$result$se,2)`$$
+$$DF=n-1=`r x$result$n`-1=`r round(x$result$DF,2)`$$
+
+$$t = (\bar{x} - \mu) / SE = (`r x$result$m` - `r x$result$mu`)/`r round(x$result$se,2)` = `r round(x$result$t,3)`$$
+
+where **s** is the standard deviation of the sample, $\bar{x}$ is the sample mean, $\mu$ is the hypothesized population mean, and **n** is the sample size.
+
+We can visualize the confidence interval of mean.
+
+```{r}
+plot(x)
+```
+
+Since we have a `r ifelse(two.sided,"two","one")`-tailed test, the P-value is the probability that the t statistic having `r round(x$result$DF,2)` degrees of freedom is `r if(!greater) "less than"` `r if(!greater) round(-abs(x$result$t),2)` `r if(!less) "or greater than "` `r if(!less) round(abs(x$result$t),2)`.
+
+We use the t Distribution curve to find p value.
+
+```{r}
+draw_t(DF=x$result$DF,t=x$result$t,alternative=x$result$alternative)
+```
+
+$$pt(`r round(x$result$t,3)`,`r x$result$DF`) =`r round(x$result$p,3)` $$
+
+### 4. Interpret results. 
+
+Since the P-value (`r round(x$result$p,3)`) is `r ifelse(x$result$p>x$result$alpha,"greater","less")` than the significance level (`r x$result$alpha`), we can`r if(x$result$p>x$result$alpha) "not"` reject the null hypothesis.
+
+
+### Result of meanCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+### Reference
+
+The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/hypothesis-test/mean.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 
+

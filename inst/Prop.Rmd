@@ -1,0 +1,165 @@
+---
+title: "Confidence interval for a proportion"
+output: html_document
+params:
+   result: "meanCI(mtcars$mpg)"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA)
+library(CIplot)
+library(glue)
+```
+
+```{r,echo=FALSE,message=FALSE}
+x<-params$result
+#x<-propCI(n=1600,p=0.4,alpha=0.01)
+  
+two.sided<-greater<-less<-FALSE
+if(x$result$alternative=="two.sided") two.sided=TRUE
+if(x$result$alternative=="less") less=TRUE
+if(x$result$alternative=="greater") greater=TRUE
+
+twoS="The null hypothesis will be rejected if the sample mean is too big or if it is too small."
+lessS="The null hypothesis will be rejected if the sample mean is too small."
+greaterS="The null hypothesis will be rejected if the sample mean is too big."
+```
+
+This document is prepared automatically using the following R command.
+
+```{r,echo=FALSE}
+call=paste0(deparse(x$call),collapse="")
+x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
+```
+
+## Problem
+
+
+```{r,echo=FALSE}
+
+string=glue("A major metropolitan newspaper selected a simple random sample of {x$result$n} readers from their list of {x$result$n*100} subscribers. They asked whether the paper should increase its coverage of local news. {round(x$result$p*100,1)} % of the sample wanted more local news. What is the {(1-x$result$alpha)*100}% confidence interval for the proportion of readers who would like more coverage of local news?")
+
+textBox(string)
+```
+
+
+
+## Confidence interval of a sample proportion
+
+The approach that we used to solve this problem is valid when the following conditions are met.
+
+- The sampling method must be **simple random sampling**. This condition is satisfied; the problem statement says that we used simple random sampling.
+
+- The sample should include at least 10 successes and 10 failures. Suppose we classify a "more local news" response as a success, and any other response as a failure. Then, we have `r x$result$p` $\times$ `r x$result$n` = `r x$result$p*x$result$n` successes, and `r 1-x$result$p` $\times$ `r x$result$n` = `r (1-x$result$p)*x$result$n` failures - plenty of successes and failures.
+
+If the population size is much larger than the sample size, we can use an **approximate** formula for the standard deviation or the standard error. This condition is satisfied, so we will use one of the simpler **approximate** formulas.
+
+
+### Solution
+
+Since the above requirements are satisfied, we can use the following four-step approach to construct a confidence interval.
+
+### 1. Identify a sample statistic. 
+
+Since we are trying to estimate a population proportion, we choose the sample proportion (`r x$result$p`) as the sample statistic.
+
+### 2. Select a confidence level. 
+
+In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-x$result$alpha)*100`% confidence level.
+
+### 3. Find the margin of error. 
+
+
+#### Find standard deviation or standard error. 
+
+Since we do not know the population proportion, we cannot compute the standard deviation; instead, we compute the standard error. And since the population is more than 20 times larger than the sample, we can use the following formula to compute the standard error (SE) of the proportion:
+
+
+Since we do not know the standard deviation of the population, we cannot compute the standard deviation of the sample mean; instead, we compute the standard error (SE). Because the sample size is much smaller than the population size, we can use the "approximate" formula for the standard error.
+
+
+$$ SE= \sqrt{\frac{p(1-p)}{n}}$$
+where $p$ is the sample proportion, $n$ is the sample size.
+
+$$SE=\sqrt{\frac{`r x$result$p`(1-`r x$result$p`)}{`r x$result$n`}}=`r round(x$result$se,3)`$$
+
+
+Find the critical probability(p*):
+
+```{r,echo=FALSE}
+if(x$result$alternative=="two.sided"){
+    string=glue("$$p*=1-\\alpha/2=1-{x$result$alpha}/2={1- x$result$alpha/2}$$")
+} else{
+     string=glue("$$p*=1-\\alpha=1-{x$result$alpha}$$")
+}
+```
+`r string`
+
+The **degree of freedom**(df) is:
+$$df=n-1=`r x$result$n`-1=`r x$result$n-1`$$
+
+
+The **critical value** is the z statistic having a cumulative probability equal to `r ifelse(x$result$alternative=="two.sided",1- x$result$alpha/2,1- x$result$alpha)`.
+
+```{r,results='asis',echo=FALSE}
+if(x$result$alternative=="two.sided"){
+  string=glue("$$qnorm(p)=qnorm({1- x$result$alpha/2})={round(x$result$critical,3)}$$")
+} else {
+    string=glue("$$qnorm(p)=qnorm({1- x$result$alpha})={round(x$result$critical,3)}$$") 
+} 
+```
+
+We can get the critical value using the following R code.
+
+`r string`
+
+Alternatively, we find that the critical value is `r round(x$result$critical,3)` from the z Distribution table.
+
+```{r,echo=FALSE}
+show_z_table(p=x$result$alpha,alternative=x$result$alternative)
+```
+
+
+The graph shows the $\alpha$ values are the tail areas of the distribution. 
+
+```{r,echo=FALSE}
+draw_n(p=x$result$alpha,alternative=x$result$alternative)
+```
+
+Compute **margin of error**(ME):
+
+$$ME=critical\ value \times SE$$
+$$ME=`r round(x$result$critical,3)` \times `r round(x$result$se,3)`=`r round(x$result$ME,3)`$$
+
+```{r,results='asis',echo=FALSE}
+if(two.sided) {
+     string="The range of the confidence interval is defined by the sample statistic $\\pm$margin of error."
+} else if(less){
+     string="The range of the confidence interval is defined by the -$\\infty$(infinite) and the sample statistic + margin of error."
+} else{
+     string="The range of the confidence interval is defined by the sample statistic - margin of error and the $\\infty$(infinite)."
+}
+```
+
+Specify the confidence interval. `r string` And the uncertainty is denoted by the confidence level.
+
+### 4. Confidence interval of the proportion
+ 
+
+```{glue,results='asis',echo=FALSE}
+Therefore, the {(1-x$result$alpha)*100}% confidence interval is {round(x$result$lower,2)} to {round(x$result$upper,2)}. That is, we are {(1-x$result$alpha)*100}% confident that the true proportion is in the range **{round(x$result$lower,2)} to {round(x$result$upper,2)}**.
+```
+
+
+
+### Result of propCI()
+
+```{r,echo=FALSE}
+print(x)
+```
+
+### Reference
+
+The contents of this document are modified from StatTrek.com.
+Berman H.B., "AP Statistics Tutorial", [online] Available at:  https://stattrek.com/estimation/confidence-interval-proportion.aspx?tutorial=AP URL[Accessed Data: 1/23/2022]. 

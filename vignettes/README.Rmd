@@ -1,0 +1,276 @@
+---
+title: "README"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{README}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE,comment=NA,fig.width=7,fig.height=5)
+```
+
+```{r setup,echo=FALSE,warning=FALSE}
+library(CIplot)
+```
+
+# Package "CIplot"
+
+Package CIplot is a package to estimate confidence intervals for mean, proportion, mean difference for unpaired and paired samples and proportion difference. Draw estimation plot of the confidence intervals. Generate documents explaining the statistical result step by step.
+
+# Installation
+
+```{r,eval=FALSE}
+#install.packages("devtools")
+devtools::install_github("cardiomoon/CIplot")
+```
+
+# Main functions
+
+Package CIplot have three main functions
+
+### 1. meanCI(), propCI()
+
+The main function is meanCI() and propCI(). The meanCI() function estimate confidence interval of a mean or mean difference. The propCI() function estimate confidence interval of a proportion or difference in proportion. Both functions can take raw data or summary statistics.
+
+```{r}
+# With raw data
+meanCI(mtcars,mpg)
+```
+```{r}
+# With raw data, Perform one-sample t-test  
+meanCI(mtcars,mpg,mu=23)
+```
+
+The meanCI function estimate confidence interval of mean without raw data. For example, you can answer the following question.
+
+```{r,echo=FALSE}
+string="Suppose a simple random sample of 150 students is drawn from a population of 3000 college students. Among sampled students, the average IQ score is 115 with a standard deviation of 10. What is the 99% confidence interval for the students' IQ score?"
+textBox(string)
+```
+
+```{r}
+meanCI(n=150,m=115,s=10,alpha=0.01)
+```
+
+You can specify confidence interval with alpha argument and suggested true mean with mu argument and select alternative hypothesis with alternative argument. You can see the full story in the vignette named "Confidence interval for a mean".
+
+
+You can estimate mean difference with or without raw data.
+
+```{r}
+meanCI(iris,Petal.Width,Petal.Length)
+```
+
+You can answer the following question about difference of means.
+
+```{r,echo=FALSE}
+string="The local baseball team conducts a study to find the amount spent on refreshments at the ball park. Over the course of the season they gather simple random samples of 100 men and 100 women. For men, the average expenditure was $200, with a standard deviation of $40. For women, it was $190, with a standard deviation of $20.
+
+The team owner claims that men spend at least $7 more than women. Assume that the two populations are independent and normally distributed."
+textBox(string)
+```
+
+```{r}
+x=meanCI(n1=100,n2=100,m1=200,s1=40,m2=190,s2=20,mu=7,alpha=0.05,alternative="greater")
+x
+```
+
+You can see the full story in the vignette named "Hypothesis test for a difference between means
+".
+
+Similarly, propCI() function can estimate confidence interval of proportion or difference in two proportions.
+
+```{r}
+propCI(n=100,p=0.73,P=0.8,alpha=0.01)
+```
+
+
+### 2. plot()
+
+The plot() function draw a estimation plot with the result of meanCI() function. You can see many examples on the following sections.
+
+
+### 3.interprete()
+
+You can generate documents explaining the statistical result step by step. You can see several vignettes in this package and they are made by interprete() function. For example, you can answer the following question.
+
+```{r,echo=FALSE}
+string="Suppose the Acme Drug Company develops a new drug, designed to prevent colds. The company states that the drug is equally effective for men and women. To test this claim, they choose a a simple random sample of 150 women and 100 men from a population of 12500 volunteers.
+
+At the end of the study, 71% of the women caught a cold; and 63% of the men caught a cold. Based on these findings, can we reject the company's claim that the drug is less effective for men compared to women? Use a 0.05 level of significance."
+textBox(string)
+```
+
+```{r}
+x=propCI(n1=150,n2=100,p1=0.71,p2=0.63,P=0,alternative="greater")
+x
+```
+
+The interprete() function generate the document explaining statistical result step-by-step automatically and show this on RStudio viewer or default browser. It is the same document as the vignette named "Hypothesis test for a proportion". 
+
+```{r,eval=FALSE}
+interprete(x)
+```
+
+# Basic Usage
+
+### 1. Confidence interval of mean
+
+The meanCI function estimate confidence interval of mean. The First example estimate the confidence interval of mean.
+
+```{r}
+meanCI(mtcars,mpg)
+```
+
+You can plot the confidence interval of mean.
+
+```{r}
+meanCI(mtcars,mpg) %>% plot()
+```
+You can see all data plotted. The mean and its 95% confidence interval (95% CI) is displayed as a point estimate and vertical bar respectively on a separate but aligned axes.
+
+### 2. Mean difference in unpaired samples
+
+The meanCI function can estimate confidence interval of mean difference. This example estimate the confidence interval of mean difference between unpaired sample.
+
+```{r}
+x=meanCI(iris,Sepal.Width,Sepal.Length)
+x
+```
+Above result is consistent with t.test()
+
+```{r}
+t.test(iris$Sepal.Width, iris$Sepal.Length)
+```
+
+You can get estimation plot with plot().
+
+```{r}
+plot(x,ref="test",side=FALSE)
+```
+
+An estimation plot has two features.
+
+1. It **presents all datapoints** as a swarmplot, which orders each point to display the underlying distribution.
+
+2. It presents the effect size as a 95% confidence interval on a separate but aligned axes.
+
+
+### 3. Mean differences in paired sample
+
+You can draw an estimation plot in paired sample.
+
+```{r}
+data(Anorexia,package="PairedData")
+meanCI(Anorexia,Post,Prior,paired=TRUE) %>% plot(ref="test",side=FALSE)
+```
+
+Above result is compatible with t.test().
+
+```{r}
+t.test(Anorexia$Post,Anorexia$Prior,paired=TRUE)
+```
+
+### 4. One-sided test
+
+Anorexia data in PairedData package consist of 17 paired data corresponding to the weights of girls before and after treatment for anorexia. Test the claims that the patients gain at least more than four pounds in weights after treatment. Use an 0.05 level of significance. Assume that the mean differences are approximately normally distributed.
+
+```{r}
+t.test(Anorexia$Post,Anorexia$Prior,paired=TRUE,alternative="greater",mu=4)
+```
+
+You can see the 95% confidence interval of paired mean difference is 4.23 to Inf. And the p value is 0.03917. The plot.meanCI() function visualize the confidence interval. Note the line of true mean(mu) does not cross the confidence interval.
+
+```{r}
+x=meanCI(Anorexia$Post,Anorexia$Prior,paired=TRUE,alternative="greater",mu=4)
+plot(x,ref="test",side=FALSE)
+```
+
+You can get document explaining the statistical result step by step with the following R code.
+
+```{r,eval=FALSE}
+interprete(x)
+```
+
+The interprete() function generate the document automatically and show this on RStudio viewer. It is the same document as the vignette named "Hypothesis test for the difference between paired means". Alternatively, you can see the document with default browser.
+
+```{r,eval=FALSE}
+interprete(x,viewer="browser")
+```
+
+
+### 5. Compare three or more groups
+
+You can set the group variable(x) and test variable(y) to compare variable among or between groups. 
+
+```{r}
+x=meanCI(iris,Species,Sepal.Length,mu=0) 
+x
+```
+
+```{r}
+plot(x)
+```
+
+Alternatively, if you do not specify the variables, meanCI function select all numeric variables.
+
+```{r}
+meanCI(iris) %>% plot()
+```
+
+You can select variables of interest using dplyr::select.
+
+```{r}
+iris %>% select(ends_with("Length")) %>% meanCI() %>% plot()
+```
+
+### 6. Multiple pairs
+
+You can compare multiple pairs in an estimation plot. Data anscombe2 in PairedData package consists of 4 sets of paired sample.
+
+```{r}
+data(anscombe2,package="PairedData")
+anscombe2
+```
+
+You can draw multiple pairs by setting the **idx** argument with list.
+
+```{r}
+meanCI(anscombe2,idx=list(c("X1","Y1"),c("X4","Y4"),c("X3","Y3"),c("X2","Y2")),paired=TRUE,mu=0) %>% plot()
+```
+
+```{r}
+x=meanCI(anscombe2,idx=list(c("X1","X2","X3","X4"),c("Y1","Y2","Y3","Y4")),paired=TRUE,mu=0)
+plot(x)
+```
+
+You can draw multiple pairs with long form data also.
+
+```{r}
+library(tidyr)
+longdf=pivot_longer(anscombe2,cols=X1:Y4)
+x=meanCI(longdf,name,value,idx=list(c("X1","X2","X3","X4"),c("Y1","Y2","Y3","Y4")),paired=TRUE,mu=0)
+plot(x)
+```
+
+
+### 7. Split the data with group argument
+
+You can split data with group argument and draw estimation plot with categorical(x) and continuous variable(y).
+
+```{r}
+meanCI(acs,DM,age,sex) %>% plot()
+```
+
+You can select one grouping variable and multiple continuous variables of interest and compare variables within groups.
+
+```{r,warning=FALSE}
+acs %>% select(sex,TC,TG,HDLC) %>% meanCI(group=sex) %>% plot()
+```
+Alternatively, you can select one grouping variable and multiple continuous variables of interest and compare each variable between/among groups.
+
+```{r,warning=FALSE}
+acs %>% select(sex,TC,TG,HDLC) %>% meanCI(sex,mu=0) %>% plot()
+```
