@@ -1,5 +1,5 @@
-CIplot 0.1.0
-=============
+interpretCI 0.1.0
+=================
 (2022-Jan-26)
 
-* New function meanCI(), propCI(), plot.meanCI() and interprete() added
+* New function meanCI(), propCI(), plot.meanCI() and interpret() added

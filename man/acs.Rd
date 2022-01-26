@@ -15,6 +15,6 @@ A dataset containing demographic data and laboratory data of 857 patients with
 acute coronary syndrome(ACS).
 }
 \examples{
-CIplot::acs
+interpretCI::acs
 }
 \keyword{datasets}

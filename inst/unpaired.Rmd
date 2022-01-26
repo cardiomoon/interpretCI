@@ -7,7 +7,7 @@ params:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,comment=NA)
-library(CIplot)
+library(interpretCI)
 library(glue)
 ```
 
@@ -26,7 +26,7 @@ This document is prepared automatically using the following R command.
 
 ```{r,echo=FALSE}
 call=paste0(deparse(x$call),collapse="")
-x1=paste0("library(CIplot)\nx=",call,"\ninterprete(x)")
+x1=paste0("library(interpretCI)\nx=",call,"\ninterpret(x)")
 textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
 ```
 

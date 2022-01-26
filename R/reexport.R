@@ -9,6 +9,6 @@ dplyr::select
 
 #' @inherit moonBook::acs description source references title
 #' @examples
-#' CIplot::acs
+#' interpretCI::acs
 #' @export
 acs <- moonBook::acs

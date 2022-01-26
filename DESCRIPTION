@@ -1,10 +1,10 @@
-Package: interpreteCI
+Package: interpretCI
 Type: Package
 Title: Estimate the Confidence Interval and Interprete Step by Step
 Version: 0.1.0
 Authors@R: person("Keon-Woong","Moon", email="cardiomoon@gmail.com",
     role=c("aut", "cre"))
-URL: https://github.com/cardiomoon/CIplot
+URL: https://github.com/cardiomoon/interpretCI
 Description: Estimate confidence intervals for mean, proportion, mean difference 
    for unpaired and paired samples and proportion difference. Plot the confidence 
    intervals. Generate documents explaining the statistical result step by step.

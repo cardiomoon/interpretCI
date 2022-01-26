@@ -21,7 +21,7 @@ isProvided=function(x,seek='mu'){
         ifelse(length(grep(seek,temp))==0,FALSE,TRUE)
 }
 
-#' Interprete an object of meanCI
+#' Interpret an object of meanCI
 #' @param x An object of class "meanCI"
 #' @param viewer Character One of c("rstudio","browser")
 #' @importFrom rmarkdown render
@@ -45,16 +45,16 @@ isProvided=function(x,seek='mu'){
 #' x=propCI(n=100,p=0.73,P=0.8,alpha=0.05,alternative="greater")
 #' x=propCI(n1=100,n2=200,p1=0.38,p2=0.51,alpha=0.01)
 #' x=propCI(n1=150,n2=100,p1=0.71,p2=0.63,P=0,alternative="greater")
-#' interprete(x)
-#' interprete(x,"browser")
+#' interpret(x)
+#' interpret(x,"browser")
 #' }
-interprete=function(x, viewer="rstudio"){
+interpret=function(x, viewer="rstudio"){
      fname=attr(x,"measure")
      if(fname %in% c("prop","propdiff")){
             if(isProvided(x,"P")) fname=paste0(fname,"2")
      } else if(isProvided(x)) fname=paste0(fname,"2")
 
-     rmdfile=paste0(path.package("CIplot", quiet = FALSE),paste0("/",fname,".Rmd"))
+     rmdfile=paste0(path.package("interpretCI", quiet = FALSE),paste0("/",fname,".Rmd"))
      rmarkdown::render(rmdfile,output_dir=".",params=list(result=x))
      # if(viewer=="rstudio") {
      rstudio_viewer(paste0(fname,".html"),viewer=viewer)

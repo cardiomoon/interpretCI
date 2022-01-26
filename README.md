@@ -1,6 +1,6 @@
-# Package “CIplot”
+# Package “interpretCI”
 
-Package CIplot is a package to estimate confidence intervals for mean,
+Package interpretCI is a package to estimate confidence intervals for mean,
 proportion, mean difference for unpaired and paired samples and
 proportion difference. Draw estimation plot of the confidence intervals.
 Generate documents explaining the statistical result step by step.
@@ -9,12 +9,12 @@ Generate documents explaining the statistical result step by step.
 
 ``` r
 #install.packages("devtools")
-devtools::install_github("cardiomoon/CIplot")
+devtools::install_github("cardiomoon/interpretCI")
 ```
 
 # Main functions
 
-Package CIplot have three main functions
+Package interpretCI have three main functions
 
 ### 1. meanCI(), propCI()
 
@@ -155,11 +155,11 @@ propCI(n=100,p=0.73,P=0.8,alpha=0.01)
 The plot() function draw a estimation plot with the result of meanCI()
 function. You can see many examples on the following sections.
 
-### 3.interprete()
+### 3.interpret()
 
 You can generate documents explaining the statistical result step by
 step. You can see several vignettes in this package and they are made by
-interprete() function. For example, you can answer the following
+interpret() function. For example, you can answer the following
 question.
 
 ![](man/figures/unnamed-chunk-11-1.png)
@@ -189,13 +189,13 @@ x
     attr(,"measure")
     [1] "propdiff"
 
-The interprete() function generate the document explaining statistical
+The interpret() function generate the document explaining statistical
 result step-by-step automatically and show this on RStudio viewer or
 default browser. It is the same document as the vignette named
 “Hypothesis test for a proportion”.
 
 ``` r
-interprete(x)
+interpret(x)
 ```
 
 # Basic Usage
@@ -358,16 +358,16 @@ You can get document explaining the statistical result step by step with
 the following R code.
 
 ``` r
-interprete(x)
+interpret(x)
 ```
 
-The interprete() function generate the document automatically and show
+The interpret() function generate the document automatically and show
 this on RStudio viewer. It is the same document as the vignette named
 “Hypothesis test for the difference between paired means”.
 Alternatively, you can see the document with default browser.
 
 ``` r
-interprete(x,viewer="browser")
+interpret(x,viewer="browser")
 ```
 
 ### 5. Compare three or more groups
