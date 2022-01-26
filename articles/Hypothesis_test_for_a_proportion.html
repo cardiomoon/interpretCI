@@ -54,6 +54,9 @@
     <a class="dropdown-item" href="../articles/Package_interpretCI.html">R package interpretCI</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -88,7 +91,7 @@
     
     
 <p>This document is prepared automatically using the following R command.</p>
-<template id="cb6b8ff0-a13c-4bbc-a3de-979d8bc72591"><style>
+<template id="b72af91d-3907-4b2e-8ea4-bcfe2f2bc660"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -124,12 +127,12 @@ background-color: transparent;
 }
 </style>
 <div class="tabwid">
-<style>.cl-fe9a00fa{}.cl-fe941118{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-fe9425c2{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1.5;background-color:transparent;}.cl-fe9454ca{width:864pt;background-color:rgba(242, 242, 242, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(127, 127, 127, 1.00);border-top: 1pt solid rgba(127, 127, 127, 1.00);border-left: 1pt solid rgba(127, 127, 127, 1.00);border-right: 1pt solid rgba(127, 127, 127, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table class="table cl-fe9a00fa"><tbody><tr style="overflow-wrap:break-word;"><td class="cl-fe9454ca"><p class="cl-fe9425c2"><span class="cl-fe941118">library(interpretCI)<br>x=propCI(n = 100, p = 0.73, P = 0.8, alpha = 0.01)<br>interpret(x)</span></p></td></tr></tbody></table>
-</div></template><div class="flextable-shadow-host" id="7af75f98-446d-4ab2-90b1-505c32e7130c"></div>
+<style>.cl-3fb81672{}.cl-3fb0027a{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:italic;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-3fb01a12{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1.5;background-color:transparent;}.cl-3fb04f1e{width:864pt;background-color:rgba(242, 242, 242, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(127, 127, 127, 1.00);border-top: 1pt solid rgba(127, 127, 127, 1.00);border-left: 1pt solid rgba(127, 127, 127, 1.00);border-right: 1pt solid rgba(127, 127, 127, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table class="table cl-3fb81672"><tbody><tr style="overflow-wrap:break-word;"><td class="cl-3fb04f1e"><p class="cl-3fb01a12"><span class="cl-3fb0027a">library(interpretCI)<br>x=propCI(n = 100, p = 0.73, P = 0.8, alpha = 0.01)<br>interpret(x)</span></p></td></tr></tbody></table>
+</div></template><div class="flextable-shadow-host" id="c1ccbf56-d632-4b77-bce3-4a60592269dd"></div>
 <script>
-var dest = document.getElementById("7af75f98-446d-4ab2-90b1-505c32e7130c");
-var template = document.getElementById("cb6b8ff0-a13c-4bbc-a3de-979d8bc72591");
+var dest = document.getElementById("c1ccbf56-d632-4b77-bce3-4a60592269dd");
+var template = document.getElementById("b72af91d-3907-4b2e-8ea4-bcfe2f2bc660");
 var caption = template.content.querySelector("caption");
 if(caption) {
   caption.style.cssText = "display:block;text-align:center;";
@@ -143,7 +146,7 @@ fantome.appendChild(templateContent);
 </script><div class="section level2">
 <h2 id="problem">Problem<a class="anchor" aria-label="anchor" href="#problem"></a>
 </h2>
-<template id="c32f346c-7e50-44e0-8a5e-7152bfa3e90e"><style>
+<template id="b7a444da-9da6-4eae-89ca-a133caa08a5c"><style>
 .tabwid table{
   border-spacing:0px !important;
   border-collapse:collapse;
@@ -179,12 +182,12 @@ background-color: transparent;
 }
 </style>
 <div class="tabwid">
-<style>.cl-feb229f0{}.cl-fead29b4{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-fead36c0{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1.5;background-color:transparent;}.cl-fead5bf0{width:864pt;background-color:rgba(255, 248, 220, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(255, 0, 0, 1.00);border-top: 1pt solid rgba(255, 0, 0, 1.00);border-left: 1pt solid rgba(255, 0, 0, 1.00);border-right: 1pt solid rgba(255, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
-<table class="table cl-feb229f0"><tbody><tr style="overflow-wrap:break-word;"><td class="cl-fead5bf0"><p class="cl-fead36c0"><span class="cl-fead29b4">The CEO of a large electric utility claims that 20 percent of his 10000 customers are very satisfied with the service they receive. To test this claim, the local newspaper surveyed 100 customers, using simple random sampling. Among the sampled customers, 27 percent say they are very satisified. Based on these findings, can we reject the CEO's hypothesis that 20% of the customers are very satisfied? Use a 0.01 level of significance.</span></p></td></tr></tbody></table>
-</div></template><div class="flextable-shadow-host" id="30d369a1-64bb-4e65-a311-08c4106220b2"></div>
+<style>.cl-3fd18a8a{}.cl-3fcb1a4c{font-family:'DejaVu Sans';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-3fcb2898{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1.5;background-color:transparent;}.cl-3fcb50ca{width:864pt;background-color:rgba(255, 248, 220, 1.00);vertical-align: middle;border-bottom: 1pt solid rgba(255, 0, 0, 1.00);border-top: 1pt solid rgba(255, 0, 0, 1.00);border-left: 1pt solid rgba(255, 0, 0, 1.00);border-right: 1pt solid rgba(255, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style>
+<table class="table cl-3fd18a8a"><tbody><tr style="overflow-wrap:break-word;"><td class="cl-3fcb50ca"><p class="cl-3fcb2898"><span class="cl-3fcb1a4c">The CEO of a large electric utility claims that 20 percent of his 10000 customers are very satisfied with the service they receive. To test this claim, the local newspaper surveyed 100 customers, using simple random sampling. Among the sampled customers, 27 percent say they are very satisified. Based on these findings, can we reject the CEO's hypothesis that 20% of the customers are very satisfied? Use a 0.01 level of significance.</span></p></td></tr></tbody></table>
+</div></template><div class="flextable-shadow-host" id="17346fc3-2ea1-4bb7-b081-9878a6427a98"></div>
 <script>
-var dest = document.getElementById("30d369a1-64bb-4e65-a311-08c4106220b2");
-var template = document.getElementById("c32f346c-7e50-44e0-8a5e-7152bfa3e90e");
+var dest = document.getElementById("17346fc3-2ea1-4bb7-b081-9878a6427a98");
+var template = document.getElementById("b7a444da-9da6-4eae-89ca-a133caa08a5c");
 var caption = template.content.querySelector("caption");
 if(caption) {
   caption.style.cssText = "display:block;text-align:center;";
