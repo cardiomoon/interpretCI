@@ -1,0 +1,20 @@
+pandoc: 2.7.3
+pkgdown: 2.0.2
+pkgdown_sha: ~
+articles:
+  Confidence_interval_for_a_mean: Confidence_interval_for_a_mean.html
+  Confidence_interval_for_a_proportion: Confidence_interval_for_a_proportion.html
+  Confidence_interval_for_paired_mean_difference: Confidence_interval_for_paired_mean_difference.html
+  Confidence_interval_for_proportion_difference: Confidence_interval_for_proportion_difference.html
+  Confidence_interval_for_unpaired_mean_difference: Confidence_interval_for_unpaired_mean_difference.html
+  Hypotheis_test_for_a_difference_between_proportions: Hypotheis_test_for_a_difference_between_proportions.html
+  Hypothesis_test_Paired_Mean_Diff: Hypothesis_test_Paired_Mean_Diff.html
+  Hypothesis_test_Unpaired_Mean_diff: Hypothesis_test_Unpaired_Mean_diff.html
+  Hypothesis_test_for_a_mean: Hypothesis_test_for_a_mean.html
+  Hypothesis_test_for_a_proportion: Hypothesis_test_for_a_proportion.html
+  Package_interpretCI: Package_interpretCI.html
+last_built: 2022-01-26T14:25Z
+urls:
+  reference: https://cardiomoon.github.io/interpretCI/reference
+  article: https://cardiomoon.github.io/interpretCI/articles
+
