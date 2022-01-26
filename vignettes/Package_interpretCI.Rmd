@@ -1,8 +1,8 @@
 ---
-title: "README"
+title: "R package interpretCI"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{README}
+  %\VignetteIndexEntry{R package interpretCI}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -25,9 +25,9 @@ Imports:
    flextable,
    officer,
    english,
-   RColorBrewer
+   RColorBrewer,
+   moonBook
 Suggests:
-    moonBook,
     knitr,
     PairedData,
     glue
