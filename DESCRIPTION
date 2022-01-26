@@ -1,6 +1,6 @@
 Package: interpretCI
 Type: Package
-Title: Estimate the Confidence Interval and Interprete Step by Step
+Title: Estimate the Confidence Interval and Interpret Step by Step
 Version: 0.1.0
 Authors@R: person("Keon-Woong","Moon", email="cardiomoon@gmail.com",
     role=c("aut", "cre"))
