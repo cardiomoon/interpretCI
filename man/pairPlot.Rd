@@ -2,26 +2,24 @@
 % Please edit documentation in R/plot.meanCI.R
 \name{pairPlot}
 \alias{pairPlot}
-\title{Draw a pair plot}
+\title{Draw a pair plot with an object of class meanCI}
 \usage{
-pairPlot(data, ref = NULL, palette = NULL)
+pairPlot(x, palette = NULL)
 }
 \arguments{
-\item{data}{a data.frame}
-
-\item{ref}{Numeric or NULL}
+\item{x}{An object of class "meanCI" with attr(x,"measure")=="paired"}
 
 \item{palette}{The name of color palette from RColorBrewer package or NULL}
 }
 \value{
-a ggplot
+A ggplot
 }
 \description{
-Draw a pair plot
+Draw a pair plot with an object of class meanCI
 }
 \examples{
-x=meanCI(mtcars,paired=TRUE)
-pairPlot(x$data)
-pairPlot(x$data,ref=c(1,4,6))
-pairPlot(x$data,ref=c(1,3))
+x=meanCI(iris,paired=TRUE)
+pairPlot(x)
+x=meanCI(iris,Petal.Width, Petal.Length,paired=TRUE)
+pairPlot(x)
 }

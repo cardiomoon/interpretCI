@@ -4,14 +4,12 @@
 \alias{plot.meanCI}
 \title{S3 method for an object of class "meanCI"}
 \usage{
-\method{plot}{meanCI}(x, ref = "control", print = TRUE, side = NULL, palette = NULL, ...)
+\method{plot}{meanCI}(x, ref = "control", side = NULL, palette = NULL, ...)
 }
 \arguments{
 \item{x}{an object of class "meanCI"}
 
 \item{ref}{string One of c("test","control").}
-
-\item{print}{logical If true, print plot}
 
 \item{side}{logical or NULL If true draw side by side plot}
 

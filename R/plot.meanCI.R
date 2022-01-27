@@ -1,6 +1,5 @@
 #' S3 method for an object of class "meanCI"
 #' @param x an object of class "meanCI"
-#' @param print logical If true, print plot
 #' @param side logical or NULL If true draw side by side plot
 #' @param ... Further arguments to be passed
 #' @param ref string One of c("test","control").
@@ -52,9 +51,9 @@
 #' acs %>% select(sex,TC,TG,HDLC) %>% meanCI(group=sex) %>% plot()
 #' acs %>% select(sex,TC,TG,HDLC) %>% meanCI(sex) %>% plot()
 #' }
-plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
+plot.meanCI=function(x,ref="control",side=NULL,palette=NULL,...){
         # x= meanCI(n1=30,n2=25,m1=78,s1=10,m2=85,s2=15,alpha=0.10)
-                # ref="control";print=TRUE;side=NULL;palette=NULL
+                # ref="control";side=NULL;palette=NULL
         result=x
         df=result$data
         xname=names(df)[1]
@@ -74,24 +73,15 @@ plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
 
         if(attr(result,"measure")=="mean"){
                 p=meanCIplot1(x)
-                if(print) print(p)
-                return(invisible(p))
+                return(p)
 
         }
 
         if(paired){
                 xname="name"
                 mode=2
-                ref1=1
-                if(nrow(result$result)>1){
-                        for(i in 2:nrow(result$result)){
-                                if(result$result$control[i]!=result$result$control[i-1]){
-                                        ref1=c(ref1,i+length(ref1))
-                                }
-                        }
-                }
+                p1=pairPlot(x,palette=palette)
 
-                ref1
                 if(longform==FALSE){
                         df=df[1:2]
                         df=na.omit(df)
@@ -102,23 +92,10 @@ plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
                         names(df1)[1]="name"
                         df1$x=c(0.8,2.2)
                         df1$label=paste0(df1$name,"\nN=",df1$no)
-                        df1
                         df1$name=factor(df1$name,levels=names(df)[1:2])
 
-                        df$id=1:nrow(df)
-                        longdf=pivot_longer(df,cols=1:2)
-                        longdf$name=factor(longdf$name,levels=names(df)[1:2])
-
-                        p1=pairPlot(longdf,ref=ref1,palette=palette)
-
-                        p1=p1+
-                                geom_segment(data=df1,aes_string(x="x",xend="x",y="lower",yend="upper",color="name"),
-                                             size=1.5)+
-                                geom_point(data=df1,aes_string(x="x",y="m",color="name"),pch=21,fill="white",size=2)
 
                 } else{
-                        p1=pairPlot(df,ref=ref1,palette=palette)
-
                         res=split(df[[yname]],df[[xname]])
                         df1=map2_dfr(names(res),res,function(x,y){
                                         y[is.na(y)]<-NULL
@@ -126,11 +103,7 @@ plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
 
                         })
                         df1<-df1 %>% dplyr::filter(.data$no!=0)
-                        df1
-
                 }
-
-
         } else{
                 simuldata=FALSE
                 if("list" %in% class(result$data)){
@@ -230,8 +203,6 @@ plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
 
         if(!side){
 
-                #xrange=aplot::xrange(p1)
-                xrange1=aplot::xrange(p1)
 
                 p2<-ggplot(df2,aes_string(x="y",y="x"))+
                         geom_polygon(aes_string(group="group"),fill=df2$group1,alpha=0.5)+
@@ -259,7 +230,7 @@ plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
                         theme(axis.text=element_text(size=11),axis.title =element_text(size=14))+
                         expand_limits(x=c(0.5))
 
-                df1
+                xrange1=aplot::xrange(p1)
 
                 myrange=c(xrange1[1]+0.1,xrange1[2]-0.1)
                 p1=p1+expand_limits(x=myrange)
@@ -268,7 +239,6 @@ plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
                              side=FALSE,
                              heights=c(3,2))
                 class(reslist)="plotCI"
-               # if(print) print(p1/p2+plot_layout(heights=c(3,2)))
 
                 return(reslist)
 
@@ -420,6 +390,57 @@ meanCIplot1=function(x){
         p
 }
 
+#' Draw a pair plot with an object of class meanCI
+#' @param x An object of class "meanCI" with attr(x,"measure")=="paired"
+#' @param palette The name of color palette from RColorBrewer package or NULL
+#' @return A ggplot
+#' @export
+#' @examples
+#' x=meanCI(iris,paired=TRUE)
+#' pairPlot(x)
+#' x=meanCI(iris,Petal.Width, Petal.Length,paired=TRUE)
+#' pairPlot(x)
+pairPlot=function(x,palette=NULL){
+        df=x$data
+        ref1=1
+        if(nrow(x$result)>1){
+                for(i in 2:nrow(x$result)){
+                        if(x$result$control[i]!=x$result$control[i-1]){
+                                ref1=c(ref1,i+length(ref1))
+                        }
+                }
+        }
+
+        if(is.null(attr(x,"form"))){
+                df=df[1:2]
+                df=na.omit(df)
+                df1=map2_dfr(names(df),df,function(x,y){
+                        data.frame(x,m=mean(y),lower=mean(y)-sd(y),upper=mean(y)+sd(y),no=length(y))
+
+                })
+                names(df1)[1]="name"
+                df1$x=c(0.8,2.2)
+                df1$label=paste0(df1$name,"\nN=",df1$no)
+                df1$name=factor(df1$name,levels=names(df)[1:2])
+
+                df$id=1:nrow(df)
+                longdf=pivot_longer(df,cols=1:2)
+                longdf$name=factor(longdf$name,levels=names(df)[1:2])
+
+                p=pairPlot1(longdf,ref=ref1,palette=palette)
+
+                p=p+
+                        geom_segment(data=df1,aes_string(x="x",xend="x",y="lower",yend="upper",color="name"),
+                                     size=1.5)+
+                        geom_point(data=df1,aes_string(x="x",y="m",color="name"),pch=21,fill="white",size=2)
+
+        } else{
+                p=pairPlot1(df,ref=ref1,palette=palette)
+        }
+        p
+}
+
+
 #' Draw a pair plot
 #' @param data a data.frame
 #' @param ref Numeric or NULL
@@ -430,10 +451,10 @@ meanCIplot1=function(x){
 #' @export
 #' @examples
 #' x=meanCI(mtcars,paired=TRUE)
-#' pairPlot(x$data)
-#' pairPlot(x$data,ref=c(1,4,6))
-#' pairPlot(x$data,ref=c(1,3))
-pairPlot=function(data,ref=NULL,palette=NULL){
+#' pairPlot1(x$data)
+#' pairPlot1(x$data,ref=c(1,4,6))
+#' pairPlot1(x$data,ref=c(1,3))
+pairPlot1=function(data,ref=NULL,palette=NULL){
 
         df=data
         temp=setdiff(names(df),"id")
