@@ -11,18 +11,34 @@ library(interpretCI)
 library(glue)
 library(flextable)
 library(dplyr)
+library(tidyr)
 ```
 
 ```{r,echo=FALSE,message=FALSE}
 x<-params$result
-# x=c(95,89,76,92,91,53,67,88,75,85,90,85,87,85,85,68,81,84,71,46,75,80)
-# y=c(90,85,73,90,90,53,68,90,78,89,95,83,83,83,82,65,79,83,60,47,77,83)
-# x=meanCI(x=x,y=y,paired=TRUE,alpha=0.1)
+ # x=c(95,89,76,92,91,53,67,88,75,85,90,85,87,85,85,68,81,84,71,46,75,80)
+ # y=c(90,85,73,90,90,53,68,90,78,89,95,83,83,83,82,65,79,83,60,47,77,83)
+ # x=meanCI(x=x,y=y,paired=TRUE,alpha=0.1)
+# x=meanCI(iris,paired=TRUE)
+
+xresult=x$result[1,]
+if(!is.null(attr(x,"form"))){
+     vars=c(xresult$control,xresult$test)
+     x$data %>% 
+          dplyr::filter(name %in% vars) %>%
+          pivot_wider(id="id") %>%
+          select(all_of(vars)) -> wideData
+     names(wideData)=c("x","y")
+     wideData %>% mutate(d=x-y,sum=(d-mean(d))^2) ->wideData
+     
+} else{
+     wideData=x$data
+}
 
 two.sided<-greater<-less<-FALSE
-if(x$result$alternative=="two.sided") two.sided=TRUE
-if(x$result$alternative=="less") less=TRUE
-if(x$result$alternative=="greater") greater=TRUE
+if(xresult$alternative=="two.sided") two.sided=TRUE
+if(xresult$alternative=="less") less=TRUE
+if(xresult$alternative=="greater") greater=TRUE
 ```
 
 
@@ -38,20 +54,20 @@ textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
 ## Problem
 
 ```{glue,results="asis",echo=FALSE}
-**From a population of {x$result$n*100} students,{x$result$n} students were randomly selected. The sampling method was simple random sampling. All of the students were given a standardized English test and a standardized math test. Test results are summarized below.**
+**From a population of {xresult$n*100} students,{xresult$n} students were randomly selected. The sampling method was simple random sampling. All of the students were given a standardized English test and a standardized math test. Test results are summarized below.**
 ```
 ```{r,echo=FALSE}
 cat("English")
-x$data[[1]]
+wideData[[1]]
 cat("math")
-x$data[[2]]
+wideData[[2]]
 ```
 ```{glue,results="asis",echo=FALSE}
-**Find the *{(1-x$result$alpha)*100}% confidence interval* for the mean difference between student scores on the math and English tests. Assume that the mean differences are approximately normally distributed.**
+**Find the *{(1-xresult$alpha)*100}% confidence interval* for the mean difference between student scores on the math and English tests. Assume that the mean differences are approximately normally distributed.**
 ```
 
-$$\sum(d-\bar{d})^2=`r sum(x$data$sum)`$$
-$$\bar{d}=`r x$result$md`$$
+$$\sum(d-\bar{d})^2=`r sum(wideData$sum)`$$
+$$\bar{d}=`r xresult$md`$$
 
 ## Solution
 
@@ -68,17 +84,17 @@ Since the above requirements are satisfied, we can use the following four-step a
 
 #### Standard deviation($s_d$)
 
-To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r x$result$n` matched pairs. 
+To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r xresult$n` matched pairs. 
 
 ```{r}
-df=x$data[1:10,]
+df=wideData[1:10,]
 names(df)[4]="(d-mean(d)^2"
 flextable(df) %>% autofit()
 ```
 
 $$s_d=\sqrt{\frac{\sum{(d_i-\bar{d})^2}}{n-1}}$$
  
- $$s_d=\sqrt{\frac{`r sum(x$data$sum)`}{`r x$result$n`-1}}=`r round(x$result$sd,2)`$$
+ $$s_d=\sqrt{\frac{`r sum(wideData$sum)`}{`r xresult$n`-1}}=`r round(xresult$sd,2)`$$
  
 where $d_i$ is the difference for pair i, $\bar{d}$ is the sample mean of the differences, and $n$ is the number of paired values.
 
@@ -92,35 +108,35 @@ $$SE = s_d \times \sqrt{ ( 1/n )\times [ (N - n) / ( N - 1 ) ] }$$
 
 where $s_d$ is the standard deviation of the sample difference, $N$ is the number of matched pairs in the population, and $n$ is the number of matched pairs in the sample. When the population size is much larger (at least 20 times larger) than the sample size, the standard error can be approximated by:
 
-$$SE = \frac{s_d}{\sqrt{n}}=\frac{`r round(x$result$sd,2)`}{\sqrt{`r x$result$n`}}=`r round(x$result$se,2)`$$
+$$SE = \frac{s_d}{\sqrt{n}}=\frac{`r round(xresult$sd,2)`}{\sqrt{`r xresult$n`}}=`r round(xresult$se,2)`$$
 
 #### Select a confidence level. 
 
-In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-x$result$alpha)*100`% confidence level. The critical probability(p*) is:
+In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-xresult$alpha)*100`% confidence level. The critical probability(p*) is:
 
 ```{r,echo=FALSE}
-if(x$result$alternative=="two.sided"){
-    string=glue("$$p*=1-\\alpha/2=1-{x$result$alpha}/2={1- x$result$alpha/2}$$")
+if(xresult$alternative=="two.sided"){
+    string=glue("$$p*=1-\\alpha/2=1-{xresult$alpha}/2={1- xresult$alpha/2}$$")
 } else{
-     string=glue("$$p*=1-\\alpha=1-{x$result$alpha}$$")
+     string=glue("$$p*=1-\\alpha=1-{xresult$alpha}$$")
 }
 ```
 `r string`
 
 #### Degrees of freedom(DF)
 
-$$DF=n-1=`r x$result$n`-1=`r x$result$DF`$$
+$$DF=n-1=`r xresult$n`-1=`r xresult$DF`$$
 
 #### Find critical value
 
-The critical value is the $t$ statistic having `r x$result$DF`` degrees of freedom and a cumulative probability equal to 0.95. From the t Distribution table, we find that the critical value is `r round(x$result$critical,3)`.
+The critical value is the $t$ statistic having `r xresult$DF` degrees of freedom and a cumulative probability equal to 0.95. From the t Distribution table, we find that the critical value is `r round(xresult$critical,3)`.
 
 ```{r,echo=FALSE}
-show_t_table(DF=x$result$DF,p=x$result$alpha,alternative=x$result$alternative)
+show_t_table(DF=xresult$DF,p=xresult$alpha,alternative=xresult$alternative)
 ```
 
 ```{r,echo=FALSE}
-draw_t(DF=x$result$DF,p=x$result$alpha,alternative=x$result$alternative)
+draw_t(DF=xresult$DF,p=xresult$alpha,alternative=xresult$alternative)
 ```
 
 
@@ -128,7 +144,7 @@ draw_t(DF=x$result$DF,p=x$result$alpha,alternative=x$result$alternative)
 
 $$ME =critical\ value\times standard\ error$$
 
-$$ME =`r round(x$result$critical,3)`\times`r round(x$result$se,2)`=`r round(x$result$ME,2)`$$
+$$ME =`r round(xresult$critical,3)`\times`r round(xresult$se,2)`=`r round(xresult$ME,2)`$$
 
 
 ### Confidence level
@@ -149,7 +165,7 @@ if(two.sided) {
 ### Confidence interval of the mean difference
  
 ```{glue,results="asis",echo=FALSE}
-Therefore, **the {(1-x$result$alpha)*100}% confidence interval** is **{round(x$result$lower,2)} to {round(x$result$upper,2)}**. Here's how to interpret this confidence interval. Suppose we repeated this study with different random samples for men and women. Based on the confidence interval, we would expect the observed difference in sample means to be between {round(x$result$lower,2)} and {round(x$result$upper,2)} {(1-x$result$alpha)*100}% of the time.
+Therefore, **the {(1-xresult$alpha)*100}% confidence interval** is **{round(xresult$lower,2)} to {round(xresult$upper,2)}**. Here's how to interpret this confidence interval. Suppose we repeated this study with different random samples for men and women. Based on the confidence interval, we would expect the observed difference in sample means to be between {round(xresult$lower,2)} and {round(xresult$upper,2)} {(1-xresult$alpha)*100}% of the time.
 ```
 
 ### Plot

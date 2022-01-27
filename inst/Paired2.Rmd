@@ -11,6 +11,7 @@ library(interpretCI)
 library(glue)
 library(flextable)
 library(dplyr)
+library(tidyr)
 ```
 
 ```{r,echo=FALSE,message=FALSE}
@@ -18,11 +19,26 @@ x<-params$result
 # x=c(95,89,76,92,91,53,67,88,75,85,90,85,87,85,85,68,81,84,71,46,75,80)
 # y=c(90,85,73,90,90,53,68,90,78,89,95,83,83,83,82,65,79,83,60,47,77,83)
 # x=meanCI(x=x,y=y,paired=TRUE,alpha=0.05,mu=0)
+#x=meanCI(iris,paired=TRUE)
+
+xresult=x$result[1,]
+if(!is.null(attr(x,"form"))){
+     vars=c(xresult$control,xresult$test)
+     x$data %>% 
+          dplyr::filter(name %in% vars) %>%
+          pivot_wider(id="id") %>%
+          select(all_of(vars)) -> wideData
+     names(wideData)=c("x","y")
+     wideData %>% mutate(d=x-y,sum=(d-mean(d))^2) ->wideData
+     
+} else{
+     wideData=x$data
+}
 
 two.sided<-greater<-less<-FALSE
-if(x$result$alternative=="two.sided") two.sided=TRUE
-if(x$result$alternative=="less") less=TRUE
-if(x$result$alternative=="greater") greater=TRUE
+if(xresult$alternative=="two.sided") two.sided=TRUE
+if(xresult$alternative=="less") less=TRUE
+if(xresult$alternative=="greater") greater=TRUE
 twoS="The null hypothesis will be rejected if the difference between sample means is too big or if it is too small."
 lessS="The null hypothesis will be rejected if the difference between sample means is too small."
 greaterS="The null hypothesis will be rejected if the difference between sample means is too big."
@@ -41,22 +57,22 @@ textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
 ## Problem
 
 ```{glue,results="asis",echo=FALSE}
-**Total {x$result$n*2} sixth graders were randomly selected from a school district. Then, they were divided into {x$result$n} matched pairs, each pair having equal math score. One member of each pair was randomly selected to receive special training. Then, all of the students were given an math test. Test results are summarized below.**
+**Total {xresult$n*2} sixth graders were randomly selected from a school district. Then, they were divided into {xresult$n} matched pairs, each pair having equal math score. One member of each pair was randomly selected to receive special training. Then, all of the students were given an math test. Test results are summarized below.**
 ```
 
 ```{r,echo=FALSE}
 cat("Training")
-x$data[[1]]
+wideData[[1]]
 cat("No training")
-x$data[[2]]
+wideData[[2]]
 ```
 
 ```{glue,results="asis",echo=FALSE}
-**Do these results provide evidence that the special training helped or hurt student performance? Use an {x$result$alpha} level of significance. Assume that the mean differences are approximately normally distributed.**
+**Do these results provide evidence that the special training helped or hurt student performance? Use an {xresult$alpha} level of significance. Assume that the mean differences are approximately normally distributed.**
 ```
 
-$$\sum(d-\bar{d})^2=`r sum(x$data$sum)`$$
-$$\bar{d}=`r x$result$md`$$
+$$\sum(d-\bar{d})^2=`r sum(wideData$sum)`$$
+$$\bar{d}=`r xresult$md`$$
 
 
 ## Conditions
@@ -87,8 +103,8 @@ Every hypothesis test requires the analyst to state a null hypothesis and an alt
 The hypotheses concern a new variable d, which is based on the difference between paired values from two data sets.
 
 
-$$Null\ hypothesis(H_0): \mu_1-\mu_2 `r ifelse(two.sided,"=",ifelse(less,">=","<="))` `r x$result$mu`$$
-$$Alternative\ hypothesis(H_1): \mu_1-\mu_2 `r ifelse(two.sided, "\\neq" ,ifelse(less,"<",">"))` `r x$result$mu`$$
+$$Null\ hypothesis(H_0): \mu_1-\mu_2 `r ifelse(two.sided,"=",ifelse(less,">=","<="))` `r xresult$mu`$$
+$$Alternative\ hypothesis(H_1): \mu_1-\mu_2 `r ifelse(two.sided, "\\neq" ,ifelse(less,"<",">"))` `r xresult$mu`$$
 
 Note that these hypotheses constitute a `r ifelse(two.sided,"two","one")`-tailed test. `r ifelse(two.sided,twoS,ifelse(less,lessS,greaterS))`.
 
@@ -99,10 +115,10 @@ Using sample data, find the standard deviation, standard error, degrees of freed
 
 #### Standard deviation($s_d$)
 
-To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r x$result$n` matched pairs. 
+To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r xresult$n` matched pairs. 
 
-```{r}
-df=x$data[1:10,]
+```{r,echo=FALSE}
+df=wideData[1:10,]
 names(df)[4]="(d-mean(d)^2"
 flextable(df) %>% autofit()
 ```
@@ -112,7 +128,7 @@ flextable(df) %>% autofit()
 
  $$s_d=\sqrt{\frac{\sum{(d_i-\bar{d})^2}}{n-1}}$$
  
- $$s_d=\sqrt{\frac{`r sum(x$data$sum)`}{`r x$result$n`-1}}=`r round(x$result$sd,2)`$$
+ $$s_d=\sqrt{\frac{`r sum(wideData$sum)`}{`r xresult$n`-1}}=`r round(xresult$sd,2)`$$
  
 where $d_i$ is the difference for pair i, $\bar{d}$ is the sample mean of the differences, and $n$ is the number of paired values.
 
@@ -126,45 +142,45 @@ $$SE = s_d \times \sqrt{ ( 1/n )\times [ (N - n) / ( N - 1 ) ] }$$
 
 where $s_d$ is the standard deviation of the sample difference, $N$ is the number of matched pairs in the population, and $n$ is the number of matched pairs in the sample. When the population size is much larger (at least 20 times larger) than the sample size, the standard error can be approximated by:
 
-$$SE = \frac{s_d}{\sqrt{n}}=\frac{`r round(x$result$sd,2)`}{\sqrt{`r x$result$n`}}=`r round(x$result$se,2)`$$
+$$SE = \frac{s_d}{\sqrt{n}}=\frac{`r round(xresult$sd,2)`}{\sqrt{`r xresult$n`}}=`r round(xresult$se,2)`$$
 
 #### Select a confidence level. 
 
-In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-x$result$alpha)*100`% confidence level. The critical probability(p*) is:
+In this analysis, the confidence level is defined for us in the problem. We are working with a `r (1-xresult$alpha)*100`% confidence level. The critical probability(p*) is:
 
 ```{r,echo=FALSE}
 if(two.sided){
-    string=glue("$$p*=1-\\alpha/2=1-{x$result$alpha}/2={1- x$result$alpha/2}$$")
+    string=glue("$$p*=1-\\alpha/2=1-{xresult$alpha}/2={1- xresult$alpha/2}$$")
 } else{
-     string=glue("$$p*=1-\\alpha=1-{x$result$alpha}$$")
+     string=glue("$$p*=1-\\alpha=1-{xresult$alpha}$$")
 }
 ```
 `r string`
 
 #### Degrees of freedom(DF)
 
-$$DF=n-1=`r x$result$n`-1=`r x$result$DF`$$
+$$DF=n-1=`r xresult$n`-1=`r xresult$DF`$$
 
 #### Test statistics
 
 The test statistic is a t statistic (t) defined by the following equation.
 
 $$t = [ (\bar{x1} - \bar{x2}) - \mu ] / SE = ( \bar{d}-\mu) / SE$$
-$$t=[(`r round(x$result$m1,2)`-`r round(x$result$m2,2)`)-`r x$result$mu`]/`r round(x$result$se,2)`=`r round(x$result$t,2)`$$
+$$t=[(`r round(xresult$m1,2)`-`r round(xresult$m2,2)`)-`r xresult$mu`]/`r round(xresult$se,2)`=`r round(xresult$t,2)`$$
 
 where $\bar{x1}$ is the mean of sample 1, $\bar{x2}$ is the mean of sample 2, $\bar{d}$ is the mean difference between paired values in the sample, $\mu$ is the hypothesized difference between population means, and SE is the standard error.
 
-Since we have a `r ifelse(two.sided,"two","one")`-tailed test, the P-value is the probability that the t statistic having `r round(x$result$DF,2)` degrees of freedom is `r if(!greater) "less than"` `r if(!greater) round(-abs(x$result$t),2)` `r if(!less) "or greater than "` `r if(!less) round(abs(x$result$t),2)`.
+Since we have a `r ifelse(two.sided,"two","one")`-tailed test, the P-value is the probability that the t statistic having `r round(xresult$DF,2)` degrees of freedom is `r if(!greater) "less than"` `r if(!greater) round(-abs(xresult$t),2)` `r if(!less) "or greater than "` `r if(!less) round(abs(xresult$t),2)`.
 
 We use the t Distribution curve to find p value.
 
 ```{r}
-draw_t(DF=round(x$result$DF,2),t=x$result$t,alternative=x$result$alternative)
+draw_t(DF=round(xresult$DF,2),t=xresult$t,alternative=xresult$alternative)
 ```
 
 ### 4. Interpret results. 
 
-Since the P-value (`r round(x$result$p,3)`) is `r ifelse(x$result$p>x$result$alpha,"greater","less")` than the significance level (`r x$result$alpha`), we can`r if(x$result$p>x$result$alpha) "not"` reject the null hypothesis.
+Since the P-value (`r round(xresult$p,3)`) is `r ifelse(xresult$p>xresult$alpha,"greater","less")` than the significance level (`r xresult$alpha`), we can`r if(xresult$p>xresult$alpha) "not"` reject the null hypothesis.
 
 We can plot the mean difference.
 ```{r}

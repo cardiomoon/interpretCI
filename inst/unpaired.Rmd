@@ -14,11 +14,12 @@ library(glue)
 ```{r,echo=FALSE,message=FALSE}
 x<-params$result
 #x=meanCI(n1=500,n2=1000,m1=20,s1=3,m2=15,s2=2,alpha=0.01,alternative="greater")
-
+#x=meanCI(acs,Dx,age)
+xresult=x$result[1,]
 two.sided<-greater<-less<-FALSE
-if(x$result$alternative=="two.sided") two.sided=TRUE
-if(x$result$alternative=="less") less=TRUE
-if(x$result$alternative=="greater") greater=TRUE
+if(xresult$alternative=="two.sided") two.sided=TRUE
+if(xresult$alternative=="less") less=TRUE
+if(xresult$alternative=="greater") greater=TRUE
 ```
 
 
@@ -34,9 +35,9 @@ textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
 ## Problem
 
 ```{r,echo=FALSE}
-string=glue("The local baseball team conducts a study to find the amount spent on refreshments at the ball park. Over the course of the season they gather simple random samples of {x$result$n1} men and {x$result$n2} women. For men, the average expenditure was $ {x$result$m1}, with a standard deviation of $ {x$result$s1}. For women, it was ${x$result$m2}, with a standard deviation of ${x$result$s2}.
+string=glue("The local baseball team conducts a study to find the amount spent on refreshments at the ball park. Over the course of the season they gather simple random samples of {xresult$n1} men and {xresult$n2} women. For men, the average expenditure was $ {round(xresult$m1,2)}, with a standard deviation of $ {round(xresult$s1,2)}. For women, it was ${round(xresult$m2,2)}, with a standard deviation of ${round(xresult$s2,2)}.
 
-What is the {(1-x$result$alpha)*100}% confidence interval for the spending difference between men and women? Assume that the two populations are independent and normally distributed.")
+What is the {(1-xresult$alpha)*100}% confidence interval for the spending difference between men and women? Assume that the two populations are independent and normally distributed.")
 
 textBox(string)
 ```
@@ -66,7 +67,7 @@ if(!is.na(x$data[[1]][1])) {
 
 Since we are trying to estimate the difference between population means, we choose the difference between sample means as the sample statistic. Thus, 
 
-$$\bar{x1}-\bar{x2}=`r x$result$m1`-`r x$result$m2`=`r x$result$md`$$
+$$\bar{x1}-\bar{x2}=`r round(xresult$m1,2)`-`r round(xresult$m2)`=`r round(xresult$md,)`$$
 
 ### Select a confidence level. 
 
@@ -81,37 +82,37 @@ In this analysis, the confidence level is defined for us in the problem. We are 
 The standard error is an estimate of the standard deviation of the difference between population means. We use the sample standard deviations to estimate the standard error (SE).
 
 $$SE=\sqrt{\frac{s^2_1}{n_1}+\frac{s^2_2}{n_2}}$$
-$$SE=\sqrt{\frac{`r x$result$s1`^2}{`r x$result$n1`}+\frac{`r x$result$s2`^2}{`r x$result$n2`}}$$
-$$SE=`r round(x$result$se,3)`$$
+$$SE=\sqrt{\frac{`r round(xresult$s1,2)`^2}{`r xresult$n1`}+\frac{`r round(xresult$s2,2)`^2}{`r xresult$n2`}}$$
+$$SE=`r round(xresult$se,3)`$$
 
 #### 2. Find the degree of freedom(df)
 
  $$DF=\frac{(\frac{s_1^2}{n_1}+\frac{s_2^2}{n_2})^2}{\frac{(s_1^2/n_1)^2}{n_1-1}+\frac{(s_2^2/n_2)^2}{n_2-1}}$$
-$$DF=\frac{(\frac{`r x$result$s1`^2}{`r x$result$n1`}+\frac{`r x$result$s2`^2}{`r x$result$n2`})^2}{\frac{(`r x$result$s1`^2/`r x$result$n1`)^2}{`r x$result$n1`-1}+\frac{(`r x$result$s2`^2/`r x$result$n2`)^2}{`r x$result$n2`-1}}$$
+$$DF=\frac{(\frac{`r round(xresult$s1,2)`^2}{`r xresult$n1`}+\frac{`r round(xresult$s2,2)`^2}{`r xresult$n2`})^2}{\frac{(`r round(xresult$s1,2)`^2/`r xresult$n1`)^2}{`r xresult$n1`-1}+\frac{(`r round(xresult$s2,2)`^2/`r xresult$n2`)^2}{`r xresult$n2`-1}}$$
 
 
-$$DF=`r round(x$result$DF,2)`$$
+$$DF=`r round(xresult$DF,2)`$$
 
 #### 3. Find the critical value
 
-The **critical value** is the t statistic having `r round(x$result$DF,2)` degrees of freedom and a cumulative probability equal to `r 1- x$result$alpha/ifelse(two.sided,2,1)`. From the t Distribution table, we find that the critical value is `r round(x$result$critical,3)`.
+The **critical value** is the t statistic having `r round(xresult$DF,2)` degrees of freedom and a cumulative probability equal to `r 1- xresult$alpha/ifelse(two.sided,2,1)`. From the t Distribution table, we find that the critical value is `r round(xresult$critical,3)`.
 
 ```{r,echo=FALSE}
-show_t_table(DF=round(x$result$DF,2),p=x$result$alpha,alternative=x$result$alternative)
+show_t_table(DF=round(xresult$DF,2),p=xresult$alpha,alternative=xresult$alternative)
 ```
 
 
-$$ qt(p,df)=qt(`r 1- x$result$alpha/ifelse(two.sided,2,1)`,`r round(x$result$DF,2)`)=`r round(x$result$critical,3)`$$
+$$ qt(p,df)=qt(`r 1- xresult$alpha/ifelse(two.sided,2,1)`,`r round(xresult$DF,2)`)=`r round(xresult$critical,3)`$$
 The graph shows that $\alpha$ values are the tail areas of the distribution. 
 
 ```{r,echo=FALSE}
-draw_t(DF=round(x$result$DF,2),p=x$result$alpha,alternative=x$result$alternative)
+draw_t(DF=round(xresult$DF,2),p=xresult$alpha,alternative=xresult$alternative)
 ```
 
 #### 4. Compute margin of error(ME)
 
 $$ME=critical\ value \times SE$$
-$$ME=`r round(x$result$critical,3)` \times `r round(x$result$se,3)`=`r round(x$result$ME,3)`$$
+$$ME=`r round(xresult$critical,3)` \times `r round(xresult$se,3)`=`r round(xresult$ME,3)`$$
 
 #### 5. Specify confidence interval 
 
@@ -131,7 +132,7 @@ if(two.sided) {
 ### Confidence interval of the mean difference
  
 ```{glue,results="asis",echo=FALSE}
-Therefore, the {(1-x$result$alpha)*100}% confidence interval is {round(x$result$lower,2)} to {round(x$result$upper,2)}. Here's how to interpret this confidence interval. Suppose we repeated this study with different random samples for men and women. Based on the confidence interval, we would expect the observed difference in sample means to be between {round(x$result$lower,2)} and {round(x$result$upper,2)} {(1-x$result$alpha)*100}% of the time.
+Therefore, the {(1-xresult$alpha)*100}% confidence interval is {round(xresult$lower,2)} to {round(xresult$upper,2)}. Here's how to interpret this confidence interval. Suppose we repeated this study with different random samples for men and women. Based on the confidence interval, we would expect the observed difference in sample means to be between {round(xresult$lower,2)} and {round(xresult$upper,2)} {(1-xresult$alpha)*100}% of the time.
 ```
 
 ### Plot

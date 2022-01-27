@@ -13,6 +13,7 @@ library(glue)
 
 ```{r,echo=FALSE,message=FALSE}
 x<-params$result
+#x=propCI(acs$Dx)
 
 two.sided<-greater<-less<-FALSE
 if(x$result$alternative=="two.sided") two.sided=TRUE
@@ -37,7 +38,7 @@ textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
 
 ```{r,echo=FALSE}
 
-string=glue("The CEO of a large electric utility claims that {(1-x$result$P)*100} percent of his {x$result$n*100} customers are very satisfied with the service they receive. To test this claim, the local newspaper surveyed {x$result$n} customers, using simple random sampling. Among the sampled customers, {(1-x$result$p)*100} percent say they are very satisified. Based on these findings, can we reject the CEO's hypothesis that {(1-x$result$P)*100}% of the customers are very satisfied? Use a {x$result$alpha} level of significance.")
+string=glue("The CEO of a large electric utility claims that {(1-x$result$P)*100} percent of his {x$result$n*100} customers are very satisfied with the service they receive. To test this claim, the local newspaper surveyed {x$result$n} customers, using simple random sampling. Among the sampled customers, {english2((1-x$result$p)*100,1)} percent say they are very satisified. Based on these findings, can we reject the CEO's hypothesis that {round((1-x$result$P)*100,2)}% of the customers are very satisfied? Use a {x$result$alpha} level of significance.")
 
 textBox(string)
 ```
@@ -52,7 +53,7 @@ The approach that we used to solve this problem is valid when the following cond
 
 - Each sample point can result in just two possible outcomes. We call one of these outcomes a success and the other, a failure.
 
-- The sample should include at least 10 successes and 10 failures. Suppose we classify a "more local news" response as a success, and any other response as a failure. Then, we have `r x$result$p` $\times$ `r x$result$n` = `r x$result$p*x$result$n` successes, and `r 1-x$result$p` $\times$ `r x$result$n` = `r (1-x$result$p)*x$result$n` failures - plenty of successes and failures.
+- The sample should include at least 10 successes and 10 failures. Suppose we classify a "more local news" response as a success, and any other response as a failure. Then, we have `r round(x$result$p,3)` $\times$ `r x$result$n` = `r round(x$result$p,3)*x$result$n` successes, and `r 1-round(x$result$p,3)` $\times$ `r x$result$n` = `r (1-x$result$p)*x$result$n` failures - plenty of successes and failures.
 
 - The population size is at least 20 times as big as the sample size. If the population size is much larger than the sample size, we can use an **approximate** formula for the standard deviation or the standard error. This condition is satisfied, so we will use one of the simpler **approximate** formulas.
 
@@ -93,8 +94,8 @@ In this analysis, the confidence level is defined for us in the problem. We are 
 Using sample data, we calculate the standard deviation (sd) and compute the z-score test statistic (z).
 
 $$sd=\sqrt{\frac{P\times(1-P)}{n}}$$
-$$sd=\sqrt{\frac{`r x$result$P`\times(1-`r x$result$P`)}{`r x$result$n`}}=`r x$result$se`$$
-$$z=\frac{p-P}{sd}=\frac{`r x$result$p`-`r x$result$P`}{`r x$result$se`}=`r x$result$z`$$
+$$sd=\sqrt{\frac{`r x$result$P`\times(1-`r x$result$P`)}{`r x$result$n`}}=`r round(x$result$se,3)`$$
+$$z=\frac{p-P}{sd}=\frac{`r round(x$result$p,3)`-`r x$result$P`}{`r round(x$result$se,3)`}=`r round(x$result$z,3)`$$
 where $P$ is the hypothesized value of population proportion in the null hypothesis, $p$ is the sample proportion, and $n$ is the sample size.
 
 Since we have a `r ifelse(two.sided,"two","one")`-tailed test, the P-value is the probability that the z statistic is `r if(!greater) "less than"` `r if(!greater) round(-abs(x$result$z),2)` `r if(!less) "or greater than "` `r if(!less) round(abs(x$result$z),2)`.
@@ -104,11 +105,11 @@ We can use following R code to find the p value.
 ```{r,echo=FALSE}
 
 if(two.sided){
-               string=glue("pnorm(-abs({x$result$z}))\\times2")
+               string=glue("pnorm(-abs({round(x$result$z,3)}))\\times2")
 } else if(greater){
-               string=glue("pnorm({x$result$z},lower.tail=FALSE)")
+               string=glue("pnorm({round(x$result$z,3)},lower.tail=FALSE)")
 } else{
-               string=glue("pnorm({x$result$z})")
+               string=glue("pnorm({round(x$result$z,3)})")
           }
 ```
 

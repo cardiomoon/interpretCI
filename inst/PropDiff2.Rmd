@@ -14,7 +14,8 @@ library(glue)
 ```{r,echo=FALSE,message=FALSE}
 x<-params$result
 #x=propCI(n1=100,n2=200,p1=0.38,p2=0.51)
-  
+#x=propCI(acs$sex,acs$DM)
+
 two.sided<-greater<-less<-FALSE
 if(x$result$alternative=="two.sided") two.sided=TRUE
 if(x$result$alternative=="less") less=TRUE
@@ -40,7 +41,7 @@ textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
 
 string=glue("Suppose the Acme Drug Company develops a new drug, designed to prevent colds. The company states that the drug is equally effective for men and women. To test this claim, they choose a a simple random sample of {x$result$n1} women and {x$result$n2} men from a population of {(x$result$n1+x$result$n2)*50} volunteers.
 
-At the end of the study, {x$result$p1*100}% of the women caught a cold; and {x$result$p2*100}% of the men caught a cold. Based on these findings, can we reject the company's claim that the drug is {ifelse(two.sided,'equally',ifelse(less,'more','less'))} effective for men and women? Use a {x$result$alpha} level of significance.")
+At the end of the study, {round(x$result$p1*100,1)}% of the women caught a cold; and {round(x$result$p2*100,1)}% of the men caught a cold. Based on these findings, can we reject the company's claim that the drug is {ifelse(two.sided,'equally',ifelse(less,'more','less'))} effective for men and women? Use a {x$result$alpha} level of significance.")
 
 textBox(string)
 ```
@@ -86,16 +87,16 @@ For this analysis, the significance level is `r x$result$alpha``. The test metho
 Using sample data, we calculate the pooled sample proportion (p) and the standard error (SE). Using those measures, we compute the z-score test statistic (z).
 
 $$p=\frac{p_1 \times n_1+ p_2 \times n_2}{n1+n2}$$
-$$p=\frac{`r x$result$p1` \times `r x$result$n1`+ `r x$result$p2` \times `r x$result$n2`}{`r x$result$n1`+`r x$result$n2`}$$
+$$p=\frac{`r round(x$result$p1,2)` \times `r x$result$n1`+ `r round(x$result$p2,2)` \times `r x$result$n2`}{`r x$result$n1`+`r x$result$n2`}$$
 
-$$p=`r x$result$p1*x$result$n1+x$result$p2*x$result$n2`/`r x$result$n1+x$result$n2`=`r round(x$result$ppooled,3)`$$
+$$p=`r round(x$result$p1,2)*x$result$n1+round(x$result$p2,2)*x$result$n2`/`r x$result$n1+x$result$n2`=`r round(x$result$ppooled,3)`$$
 
 $$SE=\sqrt{p\times(1-p)\times[1/n_1+1/n_2]}$$
 
 $$SE=\sqrt{`r round(x$result$ppooled,3)`\times`r round(1-x$result$ppooled,3)`\times[1/`r x$result$n1`+1/`r x$result$n2`]}=`r round(x$result$se,3)`$$
 
 
-$$z=\frac{p_1-p_2}{SE}=\frac{`r x$result$p1`-`r x$result$p2`}{`r round(x$result$se,3)`}=`r round(x$result$z,2)`$$
+$$z=\frac{p_1-p_2}{SE}=\frac{`r round(x$result$p1,2)`-`r round(x$result$p2,2)`}{`r round(x$result$se,3)`}=`r round(x$result$z,2)`$$
 
 where $p_1$ is the sample proportion in sample 1, where $p_2$ is the sample proportion in sample 2, $n_1$ is the size of sample 1, and $n_2$ is the size of sample 2.
 

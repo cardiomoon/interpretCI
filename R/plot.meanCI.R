@@ -54,7 +54,7 @@
 #' }
 plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
         # x= meanCI(n1=30,n2=25,m1=78,s1=10,m2=85,s2=15,alpha=0.10)
-               # ref="control";print=TRUE;side=FALSE;palette=NULL
+                # ref="control";print=TRUE;side=NULL;palette=NULL
         result=x
         df=result$data
         xname=names(df)[1]
@@ -118,14 +118,15 @@ plot.meanCI=function(x,ref="control",print=TRUE,side=NULL,palette=NULL,...){
 
                 } else{
                         p1=pairPlot(df,ref=ref1,palette=palette)
-                        p1
-                        res=split(df[[2]],df[[1]])
+
+                        res=split(df[[yname]],df[[xname]])
                         df1=map2_dfr(names(res),res,function(x,y){
                                         y[is.na(y)]<-NULL
                                         data.frame(x,m=mean(y),lower=mean(y)-sd(y),upper=mean(y)+sd(y),no=length(y))
 
                         })
                         df1<-df1 %>% dplyr::filter(.data$no!=0)
+                        df1
 
                 }
 

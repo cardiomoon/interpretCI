@@ -40,7 +40,7 @@ if(x$result$mu==0) {
      claim= paste0("Test the hypothesis that the patients gain weights", ifelse(greater,"more","less")," after treatment.")
    } else {
        claim= paste0("Test the claims that the patients ",ifelse(x$result$mu>0,"gain","loose")," at least ", 
-                   ifelse(greater," more"," less")," than ", english(abs(x$result$mu)), " pounds in weights after treatment.") 
+                   ifelse(greater," more"," less")," than ", english2(abs(x$result$mu)), " pounds in weights after treatment.") 
    }
 }
 ```
@@ -115,7 +115,7 @@ Using sample data, find the standard deviation, standard error, degrees of freed
 
 #### Standard deviation($s_d$)
 
-To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r x$result$n` matched pairs. In the following table, the first `r english(min(10,nrow(x$data)))` data are shown.
+To solve the problem, we have to calculate standard deviation of the differences($s_d$) computed from  differences in English and math score from `r x$result$n` matched pairs. In the following table, the first `r english2(min(10,nrow(x$data)))` data are shown.
 
 ```{r}
 df=x$data[1:min(10,nrow(x$data)),]

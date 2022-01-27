@@ -39,7 +39,7 @@ textBox(x1,italic=TRUE,bg="grey95",lcolor="grey50")
 
 ```{r,echo=FALSE}
 
-string=glue("Suppose the Cartoon Network conducts a nation-wide survey to assess viewer attitudes toward Superman. Using a simple random sample, they select {x$result$n1} boys and {x$result$n2} girls to participate in the study. {English(x$result$p1*100)} percent of the boys say that Superman is their favorite character, compared to {english(x$result$p2*100)} percent of the girls. What is the {(1-x$result$alpha)*100}% confidence interval for the true difference in attitudes toward Superman?")
+string=glue("Suppose the Cartoon Network conducts a nation-wide survey to assess viewer attitudes toward Superman. Using a simple random sample, they select {x$result$n1} boys and {x$result$n2} girls to participate in the study. {English(x$result$p1*100)} percent of the boys say that Superman is their favorite character, compared to {english2(x$result$p2*100)} percent of the girls. What is the {(1-x$result$alpha)*100}% confidence interval for the true difference in attitudes toward Superman?")
 
 textBox(string)
 ```
