@@ -13,6 +13,15 @@ propCI_sub(data, x, y = NULL)
 
 \item{y}{Character Optional. Name of another categorical column}
 }
+\value{
+A list containing at least the following components:
+\describe{
+  \item{data}{A tibble containing raw data or a list of numeric vector}
+  \item{result}{A data.frame consists of summary statistics}
+  \item{call}{the matched call}
+  \item{attr(*,"measure")}{character. One of c("prop","propdiff")}
+}
+}
 \description{
 Calculate confidence intervals of proportion or difference between proportions in a data.frame
 }

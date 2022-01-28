@@ -5,6 +5,7 @@
 #'@param maxy.lev An integer indicating the maximum number of unique values of
 #'a numeric variable be treated as a categorical variable
 #'@export
+#'@return logical
 #'@examples
 #'x=1:5
 #'is.mynumeric(x)

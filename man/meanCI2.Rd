@@ -52,6 +52,15 @@ meanCI2(
 
 \item{alternative}{A character string specifying the alternative hypothesis, must be one of "two.sided" (default), "greater" or "less".}
 }
+\value{
+An object of class "meanCI" which is a list containing at least the following components:
+\describe{
+  \item{data}{A tibble containing raw data or a list of numeric vector}
+  \item{result}{A data.frame containing of summary statistics}
+  \item{call}{the matched call}
+  \item{attr(*,"measure")}{character. One of c("mean","unpaired","paired")}
+}
+}
 \description{
 Calculate confidence intervals of mean or difference between means
 }

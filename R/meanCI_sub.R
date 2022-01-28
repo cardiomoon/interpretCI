@@ -22,6 +22,13 @@ utils::globalVariables("where")
 #' @importFrom dplyr select `%>%` everything as_tibble rename arrange
 #' @importFrom rlang .data enexpr
 #' @import utils
+#' @return An object of class "meanCI" which is a list containing at least the following components:
+#'\describe{
+#'   \item{data}{A tibble containing raw data or a list of numeric vector}
+#'   \item{result}{A data.frame consists of summary statistics}
+#'   \item{call}{the matched call}
+#'   \item{attr(*,"measure")}{character. One of c("mean","unpaired","paired")}
+#'}
 #' @export
 #' @examples
 #' meanCI(acs,age)

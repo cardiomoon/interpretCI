@@ -11,8 +11,12 @@ interpret(x, viewer = "rstudio")
 
 \item{viewer}{Character One of c("rstudio","browser")}
 }
+\value{
+No return value, called for side effect
+}
 \description{
-Interpret an object of meanCI
+Interpret an object of meanCI. Render appropriate rmarkdown file to html file and show RStudio viewer
+or browser.
 }
 \examples{
 x=meanCI(mtcars$mpg)
@@ -20,7 +24,6 @@ x=meanCI(mtcars,mpg,mu=23)
 x=meanCI(n=150,m=115,s=10,alpha=0.01)
 x=meanCI(n=50,m=295,s=20,mu=300)
 x= meanCI(n=20,m=108,s=10,mu=110,alpha=0.01,alternative="less")
-\dontrun{
 x=meanCI(n1=500,n2=1000,m1=20,s1=3,m2=15,s2=2,alpha=0.01)
 x=meanCI(n1=15,n2=20,m1=1000,s1=100,m2=950,s2=90,alpha=0.1)
 x=meanCI(n1=30,n2=25,m1=78,s1=10,m2=85,s2=15,mu=0,alpha=0.10)
@@ -33,6 +36,7 @@ x=propCI(n=100,p=0.73,P=0.8,alpha=0.01)
 x=propCI(n=100,p=0.73,P=0.8,alpha=0.05,alternative="greater")
 x=propCI(n1=100,n2=200,p1=0.38,p2=0.51,alpha=0.01)
 x=propCI(n1=150,n2=100,p1=0.71,p2=0.63,P=0,alternative="greater")
+\dontrun{
 interpret(x)
 interpret(x,"browser")
 }

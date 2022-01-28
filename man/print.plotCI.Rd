@@ -11,6 +11,9 @@
 
 \item{...}{Further arguments}
 }
+\value{
+No return value, called for side effect
+}
 \description{
 S3 method for class plotCI
 }

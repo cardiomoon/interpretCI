@@ -14,7 +14,7 @@ pairPlot1(data, ref = NULL, palette = NULL)
 \item{palette}{The name of color palette from RColorBrewer package or NULL}
 }
 \value{
-a ggplot
+A ggplot
 }
 \description{
 Draw a pair plot

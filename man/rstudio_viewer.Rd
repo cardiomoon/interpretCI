@@ -13,6 +13,9 @@ rstudio_viewer(file_name, file_path = NULL, viewer = "rstudio")
 
 \item{viewer}{Character One of c("rstudio","browser")}
 }
+\value{
+No return value, called for side effect
+}
 \description{
 Show html file in RStudio viewer or browser
 }

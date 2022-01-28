@@ -3,6 +3,7 @@
 #' @param ... Further arguments
 #' @importFrom purrr map2_dfc
 #' @importFrom dplyr all_of
+#' @return No return value, called for side effect
 #' @export
 print.meanCI=function(x,...){
      digits = getOption("digits")

@@ -1,7 +1,13 @@
 #' Calculate confidence intervals of mean or difference between means
 #'@param x An object of class data.frame or vector
 #'@param ... Further arguments
-#'@return meanCI returns an object of class "meanCI"
+#' @return An object of class "meanCI" which is a list containing at least the following components:
+#'\describe{
+#'   \item{data}{A tibble containing raw data or a list of numeric vector}
+#'   \item{result}{A data.frame consist of summary statistics}
+#'   \item{call}{the matched call}
+#'   \item{attr(*,"measure")}{character. One of c("mean","unpaired","paired")}
+#'}
 #' @examples
 #' meanCI(mtcars$mpg)
 #' meanCI(n=150,m=115,s=10,alpha=0.01)
@@ -53,6 +59,13 @@ meanCI.default=function(x,...){
 #' @importFrom dplyr as_tibble
 #' @importFrom dplyr mutate
 #' @export
+#' @return An object of class "meanCI" which is a list containing at least the following components:
+#'\describe{
+#'   \item{data}{A tibble containing raw data or a list of numeric vector}
+#'   \item{result}{A data.frame containing of summary statistics}
+#'   \item{call}{the matched call}
+#'   \item{attr(*,"measure")}{character. One of c("mean","unpaired","paired")}
+#'}
 meanCI2=function(x,y,n,m,s,n1,n2,m1,m2,s1,s2,mu=0,paired=FALSE,var.equal=FALSE,alpha=0.05,digits=2,
                 alternative="two.sided"){
 

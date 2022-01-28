@@ -23,7 +23,7 @@
 #' meanCI(mtcars,am,mpg) %>% plot()
 #' meanCI(iris,Sepal.Width) %>% plot()
 #' meanCI(iris,Sepal.Width,Sepal.Length) %>% plot()
-#' \dontrun{
+#' \donttest{
 #' meanCI(iris,Sepal.Width,Sepal.Length,paired=TRUE) %>% plot(palette="Dark2")
 #' meanCI(iris,Sepal.Width,Sepal.Length) %>% plot()
 #' meanCI(iris,Species,Sepal.Width) %>% plot(side=TRUE)
@@ -51,6 +51,12 @@
 #' acs %>% select(sex,TC,TG,HDLC) %>% meanCI(group=sex) %>% plot()
 #' acs %>% select(sex,TC,TG,HDLC) %>% meanCI(sex) %>% plot()
 #' }
+#' @return A ggplot or an object of class "plotCI" containing at least the following components:
+#' '\describe{
+#'   \item{p1}{A ggplot}
+#'   \item{p2}{A ggplot}
+#'   \item{side}{logical}
+#'}
 plot.meanCI=function(x,ref="control",side=NULL,palette=NULL,...){
         # x= meanCI(n1=30,n2=25,m1=78,s1=10,m2=85,s2=15,alpha=0.10)
                 # ref="control";side=NULL;palette=NULL
@@ -322,6 +328,7 @@ plot.meanCI=function(x,ref="control",side=NULL,palette=NULL,...){
 #'@param x An object of class plotCI
 #'@param ... Further arguments
 #'@importFrom patchwork plot_layout
+#'@return No return value, called for side effect
 #'@export
 print.plotCI=function(x,...){
         if(x$side){
@@ -445,7 +452,7 @@ pairPlot=function(x,palette=NULL){
 #' @param data a data.frame
 #' @param ref Numeric or NULL
 #' @param palette The name of color palette from RColorBrewer package or NULL
-#' @return a ggplot
+#' @return A ggplot
 #' @importFrom dplyr count
 #' @importFrom ggplot2 expand_limits scale_color_brewer
 #' @export

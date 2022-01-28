@@ -9,7 +9,14 @@
 #'@importFrom stats qt pnorm
 #'@importFrom dplyr as_tibble
 #'@export
-#'@examples
+#'@return A list containing at least the following components:
+#'\describe{
+#'   \item{data}{A tibble containing raw data or a list of numeric vector}
+#'   \item{result}{A data.frame consists of summary statistics}
+#'   \item{call}{the matched call}
+#'   \item{attr(*,"measure")}{character. One of c("prop","propdiff")}
+#'}
+#'#'@examples
 #'propCI(acs$sex)
 #'propCI(acs$sex,acs$DM)
 #'propCI(n=1600,p=0.4,alpha=0.01)
@@ -116,6 +123,13 @@ propCI=function(x,y,n,p,n1,n2,p1,p2,P=0,alpha=0.05,digits=2,alternative="two.sid
 #'@param x Character Name of a categorical column
 #'@param y Character Optional. Name of another categorical column
 #'@export
+#'@return A list containing at least the following components:
+#'\describe{
+#'   \item{data}{A tibble containing raw data or a list of numeric vector}
+#'   \item{result}{A data.frame consists of summary statistics}
+#'   \item{call}{the matched call}
+#'   \item{attr(*,"measure")}{character. One of c("prop","propdiff")}
+#'}
 #'@examples
 #'propCI_sub(acs,"sex")
 #'propCI_sub(acs,"sex","HBP")

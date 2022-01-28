@@ -17,6 +17,14 @@
 
 \item{...}{Further arguments to be passed}
 }
+\value{
+A ggplot or an object of class "plotCI" containing at least the following components:
+'\describe{
+  \item{p1}{A ggplot}
+  \item{p2}{A ggplot}
+  \item{side}{logical}
+}
+}
 \description{
 S3 method for an object of class "meanCI"
 }
@@ -25,7 +33,7 @@ meanCI(mtcars,mpg) \%>\% plot()
 meanCI(mtcars,am,mpg) \%>\% plot()
 meanCI(iris,Sepal.Width) \%>\% plot()
 meanCI(iris,Sepal.Width,Sepal.Length) \%>\% plot()
-\dontrun{
+\donttest{
 meanCI(iris,Sepal.Width,Sepal.Length,paired=TRUE) \%>\% plot(palette="Dark2")
 meanCI(iris,Sepal.Width,Sepal.Length) \%>\% plot()
 meanCI(iris,Species,Sepal.Width) \%>\% plot(side=TRUE)

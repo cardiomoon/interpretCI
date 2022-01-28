@@ -34,10 +34,15 @@ propCI(
 
 \item{alternative}{A character string specifying the alternative hypothesis, must be one of "two.sided" (default), "greater" or "less".}
 }
-\description{
-Calculate confidence intervals of proportion or difference between proportions
+\value{
+A list containing at least the following components:
+\describe{
+  \item{data}{A tibble containing raw data or a list of numeric vector}
+  \item{result}{A data.frame consists of summary statistics}
+  \item{call}{the matched call}
+  \item{attr(*,"measure")}{character. One of c("prop","propdiff")}
 }
-\examples{
+#'@examples
 propCI(acs$sex)
 propCI(acs$sex,acs$DM)
 propCI(n=1600,p=0.4,alpha=0.01)
@@ -45,4 +50,7 @@ propCI(n=100,p=0.73,P=0.8,alpha=0.01)
 propCI(n1=400,n2=300,p1=0.4,p2=0.3,alpha=0.1)
 propCI(n1=100,n2=200,p1=0.38,p2=0.51,alpha=0.01)
 propCI(n1=100,n2=200,p1=0.38,p2=0.51,alpha=0.01,alternative="less")
+}
+\description{
+Calculate confidence intervals of proportion or difference between proportions
 }
