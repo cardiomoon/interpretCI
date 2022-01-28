@@ -119,6 +119,22 @@
 <dd><p>A character string specifying the alternative hypothesis, must be one of "two.sided" (default), "greater" or "less".</p></dd>
 </dl></div>
     <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <p>An object of class "meanCI" which is a list containing at least the following components:</p><dl><dt>data</dt>
+<dd><p>A tibble containing raw data or a list of numeric vector</p></dd>
+
+  <dt>result</dt>
+<dd><p>A data.frame containing of summary statistics</p></dd>
+
+  <dt>call</dt>
+<dd><p>the matched call</p></dd>
+
+  <dt>attr(*,"measure")</dt>
+<dd><p>character. One of c("mean","unpaired","paired")</p></dd>
+
+
+</dl></div>
+    <div class="section level2">
     <h2 id="methods-by-generic-">Methods (by generic)<a class="anchor" aria-label="anchor" href="#methods-by-generic-"></a></h2>
     
 <ul><li><p><code>meanCI</code>: Default S3 method</p></li>
