@@ -1,3 +1,10 @@
+interpretCI 0.1.2
+=================
+(2022-Feb-1)
+
+* new function draw_x2() added
+
+
 interpretCI 0.1.1
 =================
 (2022-Jan-28)
