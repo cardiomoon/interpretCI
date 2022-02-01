@@ -20,7 +20,7 @@ show_t_table=function(DF=20,p=0.05,alternative="two.sided"){
      suppressMessages(res<-map_dfr(df,function(x){
           map_dfc(pp,~sprintf("%.3f",qt(.,x)))
      }))
-     colnames(res)=pp
+     colnames(res)=sprintf("%.03f",pp)
      res$df=df
      myrow=which(res$df==DF)
      res<-res %>% select(.data$df,everything())
@@ -49,7 +49,7 @@ show_z_table=function(p=0.05,alternative="two.sided"){
      pp=unique(c(pp,p))
      pp=sort(pp,decreasing=TRUE)
      suppressMessages(res<-map_dfc(pp,~sprintf("%.3f",qnorm(.))))
-     colnames(res)=pp
+     colnames(res)=sprintf("%.03f",pp)
      res$alpha="z"
      res<-res %>% select(.data$alpha,everything())
      flextable(res)%>%
@@ -57,4 +57,35 @@ show_z_table=function(p=0.05,alternative="two.sided"){
           align(align="center",part="body") %>%
           highlight(j=grep(p,colnames(res))) %>%
           autofit()
+}
+
+#' Show chisquare table
+#'
+#' Show chisquare table
+#' @param DF Numeric degree of freedom
+#' @param p Numeric probability
+#' @importFrom flextable flextable highlight autofit
+#' @importFrom purrr map_dfc
+#' @return An object of class "flextable"
+#' @export
+#' @examples
+#' show_x2_table()
+show_x2_table=function(DF=1,p=0.05){
+        DF=round(DF)
+        pp=c(0.995,0.990,0.975,0.950,0.90,0.750,0.5,0.25,0.10,0.05,0.025,0.01,0.005,0.001)
+        pp=unique(c(pp,p))
+        pp=sort(pp,decreasing=TRUE)
+        df=max(1,DF-2):(max(1,DF-2)+4)
+        suppressMessages(res<-map_dfr(df,function(x){
+                map_dfc(pp,~sprintf("%.03f",qchisq(.,x,lower.tail = FALSE)))
+        }))
+        colnames(res)=sprintf("%.03f",pp)
+        res$df=df
+        myrow=which(res$df==DF)
+        res<-res %>% select(.data$df,everything())
+        flextable(res)%>%
+                align(i=1,align="center",part="header") %>%
+                align(align="center",part="body") %>%
+                highlight(i=myrow,j=grep(p,colnames(res))) %>%
+                autofit()
 }
