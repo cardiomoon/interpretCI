@@ -4,9 +4,11 @@
 \alias{show_z_table}
 \title{Show z-value table}
 \usage{
-show_z_table(p = 0.05, alternative = "two.sided")
+show_z_table(z = NULL, p = 0.05, alternative = "two.sided")
 }
 \arguments{
+\item{z}{Numeric vector of quantile}
+
 \item{p}{Numeric probability}
 
 \item{alternative}{Character One of c("two.sided","greater","less")}
@@ -19,5 +21,6 @@ Show z-value table
 }
 \examples{
 show_z_table()
-show_z_table(p=0.01)
+show_z_table(z=1.4)
+show_z_table(p=0.160)
 }

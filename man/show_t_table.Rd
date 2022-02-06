@@ -4,10 +4,12 @@
 \alias{show_t_table}
 \title{Show t-value table}
 \usage{
-show_t_table(DF = 20, p = 0.05, alternative = "two.sided")
+show_t_table(DF = 20, t = NULL, p = 0.05, alternative = "two.sided")
 }
 \arguments{
 \item{DF}{Numeric degree of freedom}
+
+\item{t}{Numeric vector of quantile}
 
 \item{p}{Numeric probability}
 
@@ -21,4 +23,6 @@ Show t-value table
 }
 \examples{
 show_t_table()
+show_t_table(t=1.4)
+show_t_table(DF=10)
 }

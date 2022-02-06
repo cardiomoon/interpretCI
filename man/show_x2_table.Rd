@@ -4,10 +4,12 @@
 \alias{show_x2_table}
 \title{Show chisquare table}
 \usage{
-show_x2_table(DF = 1, p = 0.05)
+show_x2_table(DF = 1, x2 = NULL, p = 0.05)
 }
 \arguments{
 \item{DF}{Numeric degree of freedom}
+
+\item{x2}{Numeric vector of chi-square value}
 
 \item{p}{Numeric probability}
 }
@@ -18,5 +20,6 @@ An object of class "flextable"
 Show chisquare table
 }
 \examples{
-show_x2_table()
+show_x2_table(DF=2,x2=1.5)
+show_x2_table(p=0.05)
 }
