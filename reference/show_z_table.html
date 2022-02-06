@@ -67,12 +67,14 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">show_z_table</span><span class="op">(</span>p <span class="op">=</span> <span class="fl">0.05</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">show_z_table</span><span class="op">(</span>z <span class="op">=</span> <span class="cn">NULL</span>, p <span class="op">=</span> <span class="fl">0.05</span>, alternative <span class="op">=</span> <span class="st">"two.sided"</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>p</dt>
+    <dl><dt>z</dt>
+<dd><p>Numeric vector of quantile</p></dd>
+<dt>p</dt>
 <dd><p>Numeric probability</p></dd>
 <dt>alternative</dt>
 <dd><p>Character One of c("two.sided","greater","less")</p></dd>
@@ -92,14 +94,22 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> original dataset sample: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   alpha  0.400  0.250  0.100  0.050  0.025  0.010  0.005  0.001</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     z -0.253 -0.674 -1.282 -1.645 -1.960 -2.326 -2.576 -3.090</span>
-<span class="r-in"><span class="fu">show_z_table</span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.01</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">show_z_table</span><span class="op">(</span>z<span class="op">=</span><span class="fl">1.4</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> a flextable object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> col_keys: `alpha`, `0.400`, `0.250`, `0.100`, `0.050`, `0.025`, `0.010`, `0.005`, `0.001` </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> col_keys: `alpha`, `-3.090`, `-2.576`, `-2.326`, `-1.960`, `-1.645`, `-1.400`, `-1.282`, `-0.674`, `-0.253` </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> header has 1 row(s) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> body has 1 row(s) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> original dataset sample: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   alpha  0.400  0.250  0.100  0.050  0.025  0.010  0.005  0.001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     z -0.253 -0.674 -1.282 -1.645 -1.960 -2.326 -2.576 -3.090</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   alpha -3.090 -2.576 -2.326 -1.960 -1.645 -1.400 -1.282 -0.674 -0.253</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     z  0.001  0.005  0.010  0.025  0.050  0.081  0.100  0.250  0.400</span>
+<span class="r-in"><span class="fu">show_z_table</span><span class="op">(</span>p<span class="op">=</span><span class="fl">0.160</span><span class="op">)</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> a flextable object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> col_keys: `alpha`, `0.400`, `0.250`, `0.100`, `0.080`, `0.050`, `0.025`, `0.010`, `0.005`, `0.001` </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> header has 1 row(s) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> body has 1 row(s) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> original dataset sample: </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   alpha  0.400  0.250  0.100  0.080  0.050  0.025  0.010  0.005  0.001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     z -0.253 -0.674 -1.282 -1.405 -1.645 -1.960 -2.326 -2.576 -3.090</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
