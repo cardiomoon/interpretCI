@@ -78,8 +78,11 @@ show_t_table=function(DF=20,t=NULL,p=0.05,alternative="two.sided"){
 #' @examples
 #' show_z_table()
 #' show_z_table(z=1.4)
+#' show_z_table(z=-1.39234)
 #' show_z_table(p=0.160)
 show_z_table=function(z=NULL,p=0.05,alternative="two.sided"){
+
+       # z=NULL;p=0.05;alternative="two.sided"
      if(!is.null(z)) {
           if(alternative=="two.sided") {
                p=pnorm(q=-abs(z))*2
@@ -95,7 +98,9 @@ show_z_table=function(z=NULL,p=0.05,alternative="two.sided"){
      pp=unique(c(pp,p))
      pp=sort(pp,decreasing=TRUE)
      suppressMessages(res<-map_dfc(pp,~sprintf("%.3f",qnorm(.))))
-     colnames(res)=sprintf("%.03f",pp)
+     colnames(res)=sprintf("%.03f",pp*ifelse(alternative=="two.sided",2,1))
+     res$p="z"
+     res<-res %>% select(.data$p,everything())
 
      } else{
           pp=c(0.4,0.25,0.10,0.05,0.025,0.01,0.005,0.001)
@@ -103,19 +108,25 @@ show_z_table=function(z=NULL,p=0.05,alternative="two.sided"){
           res
           zz=sort(unique(c(res,-abs(z))))
           zz
-          suppressMessages(res<-map_dfc(zz,~sprintf("%.3f",pnorm(.))))
+          suppressMessages(res<-map_dfc(zz,~sprintf("%.3f",pnorm(.)*ifelse(alternative=="two.sided",2,1))))
           res
           colnames(res)=sprintf("%.03f",zz)
+          res$z="p"
+
+          res<-res %>% select(.data$z,everything())
 
      }
-     res$alpha="z"
-     res<-res %>% select(.data$alpha,everything())
+
      ft=flextable(res)%>%
           align(i=1,align="center",part="header") %>%
           align(align="center",part="body") %>%
           autofit()
-     if(!is.null(z)) ft=highlight(ft,j=grep(z,colnames(res)),part="all")
-     else ft=highlight(ft,j=grep(round(p,3),colnames(res)),part="all")
+
+     if(!is.null(z)) ft=highlight(ft,j=grep(sprintf("%.3f",z),colnames(res)),part="all")
+     else {
+          if(alternative=="two.sided") p=p*2
+          ft=highlight(ft,j=grep(sprintf("%.3f",p),colnames(res)),part="all")
+     }
      ft
 }
 

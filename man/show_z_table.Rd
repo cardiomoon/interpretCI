@@ -22,5 +22,6 @@ Show z-value table
 \examples{
 show_z_table()
 show_z_table(z=1.4)
+show_z_table(z=-1.39234)
 show_z_table(p=0.160)
 }
